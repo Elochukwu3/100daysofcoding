@@ -38,7 +38,7 @@ Ensure you have the following installed:
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/Elochukwu3/100daysofcoding.git
-   cd your-repo-name
+   cd 100daysofcoding
    ```
 
 2. **Install dependencies:**
@@ -65,7 +65,7 @@ Ensure you have the following installed:
    The server will start on `http://localhost:3000`.
 
 5. **Access the API documentation:**
-   Visit `http://localhost:5000/api-docs` to explore and test the API endpoints.
+   Visit `http://localhost:3000/api-docs` to explore and test the API endpoints.
 
 ## Project Structure
 
@@ -73,24 +73,24 @@ Ensure you have the following installed:
 project-root/
 │
 ├── src/
-│   ├── controllers/       # Controllers for handling requests
-│   ├── services/          # Business logic
-│   ├── models/            # Mongoose models
-│   ├── routes/            # API routes
-│   ├── middlewares/       # Middleware functions
-│   ├── utils/             # Utility functions
-│   ├── config/            # Configuration files
-│   ├── types/             # TypeScript types
-│   └── index.ts           # Application entry point
+│   ├── controllers/      
+│   ├── services/          
+│   ├── models/            
+│   ├── routes/           
+│   ├── middlewares/      
+│   ├── utils/            
+│   ├── config/           
+│   ├── types/             
+│   └── index.ts          
 │
-├── tests/                 # Unit and integration tests
-├── dist/                  # Compiled TypeScript files
-├── node_modules/          # Node.js modules
-├── .env                   # Environment variables
-├── .gitignore             # Ignored files in Git
-├── package.json           # Project metadata and dependencies
-├── tsconfig.json          # TypeScript configuration
-└── README.md              # Project documentation
+├── tests/                 
+├── dist/                  
+├── node_modules/          
+├── .env                   
+├── .gitignore            
+├── package.json           
+├── tsconfig.json          
+└── README.md             
 
 ```
 
