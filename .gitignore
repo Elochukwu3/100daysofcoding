@@ -1,0 +1,56 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*.local
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript output
+dist/
+build/
+
+# TypeScript cache
+*.tsbuildinfo
+*.d.ts
+
+# IDE and Editor specific
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Temporary files
+tmp/
+temp/
+
+# Docker files
+docker-compose.override.yml
+.docker/
+
+# NPM/Yarn lock files (optional)
+# package-lock.json
+# yarn.lock
+
+# Custom build artifacts
+public/
