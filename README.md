@@ -38,7 +38,7 @@ Ensure you have the following installed:
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/Elochukwu3/100daysofcoding.git
-   cd 100daysofcoding
+   cd backend
    ```
 
 2. **Install dependencies:**
@@ -93,4 +93,14 @@ project-root/
 └── README.md             
 
 ```
+## Branch / Commits Conventions
+
+### Branch
+**Format**: `<ft|fx>-#ticket-id-<ticket-title>`  
+**Example**: `ft-#100-add-user-role`
+
+### Commit
+**Format**: `<fx|ft|test|rf|>-#ticket-id: <short description>`  
+**Example**: `fx-#200: fix user permission`
+
 
