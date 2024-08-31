@@ -70,27 +70,50 @@ Ensure you have the following installed:
 ## Project Structure
 
 ```
-project-root/
-│
+backend/
 ├── src/
-│   ├── controllers/      
-│   ├── services/          
-│   ├── models/            
-│   ├── routes/           
-│   ├── middlewares/      
-│   ├── utils/            
-│   ├── config/           
-│   ├── types/             
-│   └── index.ts          
-│
-├── tests/                 
-├── dist/                  
-├── node_modules/          
-├── .env                   
-├── .gitignore            
-├── package.json           
-├── tsconfig.json          
-└── README.md             
-
+│   ├── modules/
+│   │   ├── auth/
+│   │   │   ├── controllers/
+│   │   │   │   └── file
+│   │   │   ├── models/
+│   │   │   │   └── file
+│   │   │   ├── routes/
+│   │   │   │   └── file
+│   │   │   └── utils/
+│   │   │       └── auth.utils.ts
+│   │   ├── products/
+│   │   │   ├── controllers/
+│   │   │   │   └── product.controller.ts
+│   │   │   ├── models/
+│   │   │   │   └── product.model.ts
+│   │   │   ├── routes/
+│   │   │   │   └── product.routes.ts
+│   │   │   ├── services/
+│   │   │   │   └── product.service.ts
+│   │   │   └── utils/
+│   │   │       └── product.utils.ts
+│   │   └── common/
+│   │       ├── middleware/
+│   │       │   ├── auth.middleware.ts
+│   │       │   ├── error.middleware.ts
+│   │       ├── utils/
+│   │       │   ├── logger.ts
+│   │       │   ├── constants.ts
+│   │       │   └── validation.ts
+│   │       ├── configs/
+│   │       │   ├── db.config.ts
+│   │       │   ├── server.config.ts
+│   │       └── interfaces/
+│   │           └── index.ts
+│   ├── app.ts
+│   └── index.ts
+├── .env
+├── .gitignore
+├── README.md
+├── tsconfig.json
+├── package.json
+└── yarn.lock
+           
 ```
 
