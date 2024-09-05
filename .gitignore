@@ -1,6 +1,7 @@
 # Node modules
 node_modules/
-
+rest.http
+*.http
 # Logs
 logs/
 *.log
