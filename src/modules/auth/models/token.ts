@@ -21,12 +21,14 @@ const tokenSchema = new mongoose.Schema({
   expiresAt: {
     type: Date,
     required: true,
-    default: new Date(Date.now() + 7 * 60 * 1000),
+    default:  function () {
+      return new Date(Date.now() + 7 * 60 * 1000);
+    },
   },
-  usuage: {
+  purpose: {
     type: String,
     required: true,
-    enum: ["resetPassword", "emailverification"],
+    enum: ["reset_password", "email_verification"],
   },
 });
  

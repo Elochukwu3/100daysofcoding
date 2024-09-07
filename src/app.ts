@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import 'express-async-errors';
+import './modules/common/config/db.config';
 import express, { Request, Response } from 'express';
 import authRoute from './modules/auth/routes/auth.routes'
 import cookieParser from 'cookie-parser';
