@@ -3,7 +3,7 @@
 import { Request, Response } from "express";
 import { Token, validateEmail } from "../models/token";
 import sendOTPEmail from "../../common/utils/sendEmail";
-import { generateOtp } from "../../common/utils/generateToken";
+import { generateOtp } from "../utils/generateOtp";
 
 export const getOtp = async (
   req: Request,
