@@ -44,6 +44,7 @@ export const validateLoginInput = (data: any) => {
           "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 digit, and be at least 8 characters long",
       }),
   });
+  return schema.validate(data);
 };
 
 export const User = mongoose.model<IUser>("User", userSchema);
