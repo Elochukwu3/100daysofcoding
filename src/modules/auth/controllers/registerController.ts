@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { validateRegisterInput } from "../models/User";
 import { HttpStatus } from "../../common/enums/StatusCodes";
+import { hashPassword } from "@common/utils/hashPassword";
+import getOtp from "./getOtp";
 
 export const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -11,7 +13,7 @@ export const registerUser = asyncHandler(
     if (error) {
       res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
-        message: "Registration unsuccessful",
+        message: error.details[0].message,
         statusCode: HttpStatus.BadRequest,
       });
       return;
@@ -27,10 +29,29 @@ export const registerUser = asyncHandler(
       return;
     }
 
+    req.session.user = req.body;
+
+    // VERIFY EMAIL BY SENDING OTP HERE
+    // Get Otp and verify it supposed to take place before actually registering
+
+    const hasedPassword = await hashPassword(password);
+    const newUser = await User.create({
+      firstname,
+      lastname,
+      state,
+      email,
+      password: hasedPassword,
+    });
+
     res.status(HttpStatus.Created).json({
-      status: "Success",
-      message: "User has been registered",
-      statusCode: HttpStatus.Created,
+      status: "success",
+      message: "Registration successful",
+      data: {
+        user: {
+          userId: newUser._id,
+          email: newUser.email,
+        },
+      },
     });
   }
 );

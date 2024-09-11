@@ -1,4 +1,5 @@
 // src/interfaces/User.ts
+import { Document } from "mongoose";
 
 export interface User {
   id: number;
@@ -6,7 +7,7 @@ export interface User {
   email: string;
 }
 
-export interface IUser {
+export interface IUser extends Document {
   firstname: string;
   lastname: string;
   state: string;
