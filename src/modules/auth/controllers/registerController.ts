@@ -3,15 +3,17 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { validateRegisterInput } from "../models/User";
 import { HttpStatus } from "../../common/enums/StatusCodes";
+import { generateOtp } from "../../common/utils/generateToken";
+import sendOTPEmail from "../../common/utils/sendEmail";
 
-export const registerUser = asyncHandler(
+const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { firstname, lastname, state, email, password } = req.body;
     const { error } = validateRegisterInput(req.body);
     if (error) {
       res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
-        message: "Registration unsuccessful",
+        message: error.details[0].message,
         statusCode: HttpStatus.BadRequest,
       });
       return;
@@ -26,11 +28,24 @@ export const registerUser = asyncHandler(
       });
       return;
     }
+    // store credentials in body to the session
+    (req.session as any).user = {
+      firstname,
+      lastname,
+      state,
+      email,
+      password,
+    };
+    const OTP = await generateOtp();
+    (req.session as any).otp = OTP;
+
+    const result = await sendOTPEmail(email as string, OTP);
 
     res.status(HttpStatus.Created).json({
-      status: "Success",
-      message: "User has been registered",
-      statusCode: HttpStatus.Created,
+      status: "success",
+      message: result,
     });
   }
 );
+
+export default registerUser;

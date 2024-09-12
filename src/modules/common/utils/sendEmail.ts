@@ -1,16 +1,14 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
-
-const sendOTPEmail = async (email:string, token:string) => {
+const sendOTPEmail = async (email: string, token: string) => {
   try {
     let transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: process.env.SMTP_EMAIL,
         pass: process.env.SMTP_PASSWORD,
       },
     });
-
 
     const htmlTemplate = `
         <html>
@@ -31,23 +29,19 @@ const sendOTPEmail = async (email:string, token:string) => {
     </html>    
         `;
 
-
     const mailOptions = {
       from: process.env.SMTP_EMAIL,
       to: email,
-      subject: 'Verify Your Email',
+      subject: "Verify Your Email",
       html: htmlTemplate,
     };
 
+    await transporter.sendMail(mailOptions);
 
-     await transporter.sendMail(mailOptions);
-  
-
-    return 'Verification email sent successfully';
+    return "Email Sent Successfully";
   } catch (error) {
-  
     throw error;
   }
 };
 
-export default sendOTPEmail
+export default sendOTPEmail;
