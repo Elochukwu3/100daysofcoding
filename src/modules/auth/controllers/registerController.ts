@@ -3,10 +3,10 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { validateRegisterInput } from "../models/User";
 import { HttpStatus } from "../../common/enums/StatusCodes";
-import { hashPassword } from "@common/utils/hashPassword";
-import getOtp from "./getOtp";
+import { generateOtp } from "../../common/utils/generateToken";
+import sendOTPEmail from "../../common/utils/sendEmail";
 
-export const registerUser = asyncHandler(
+const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { firstname, lastname, state, email, password } = req.body;
     const { error } = validateRegisterInput(req.body);
@@ -28,30 +28,24 @@ export const registerUser = asyncHandler(
       });
       return;
     }
-
-    req.session.user = req.body;
-
-    // VERIFY EMAIL BY SENDING OTP HERE
-    // Get Otp and verify it supposed to take place before actually registering
-
-    const hasedPassword = await hashPassword(password);
-    const newUser = await User.create({
+    // store credentials in body to the session
+    (req.session as any).user = {
       firstname,
       lastname,
       state,
       email,
-      password: hasedPassword,
-    });
+      password,
+    };
+    const OTP = await generateOtp();
+    (req.session as any).otp = OTP;
+
+    const result = await sendOTPEmail(email as string, OTP);
 
     res.status(HttpStatus.Created).json({
       status: "success",
-      message: "Registration successful",
-      data: {
-        user: {
-          userId: newUser._id,
-          email: newUser.email,
-        },
-      },
+      message: result,
     });
   }
 );
+
+export default registerUser;

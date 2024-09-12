@@ -6,13 +6,13 @@ const sessionConfig = session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI,
+    mongoUrl: process.env.DB_URL,
     collectionName: "sessions",
-    ttl: 10 * 60,
+    ttl: 20 * 60,
   }),
   cookie: {
-    maxAge: 1000 * 60 * 10,
-    secure: process.env.NODE_ENV === "development",
+    maxAge: 1000 * 60 * 20,
+    secure: process.env.NODE_ENV === "production",
     httpOnly: true,
   },
 });

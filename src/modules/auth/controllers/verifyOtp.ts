@@ -1,52 +1,52 @@
-import { Request, Response } from 'express';
-import { Token } from "../models/token";
+import { Request, Response } from "express";
+import { hashPassword } from "../../common/utils/hashPassword";
+import { HttpStatus } from "../../common/enums/StatusCodes";
+import { User } from "../models/User";
 
-interface VerifyOtpRequestBody {
-    token: string;
-  }
-const verifyOtp = async (req: Request< {},{}, VerifyOtpRequestBody>, res: Response): Promise<Response | undefined> => {
-    try {
-const { token } = req.body
-// req.body as unknown as { token: string };
-    //    
-        // Find the token in the database
-        const existingToken = await Token.findOne({ token });
-      
-        if (!existingToken || existingToken.purpose !== "email_verification") {
-          throw new Error("Invalid token");
-        }
-        
-        // Check if the token is expired
-        if (new Date(existingToken.expiresAt) <= new Date()) {
-          console.log(new Date(existingToken.expiresAt));
-          await existingToken.deleteOne();
-          throw new Error("Token expired");
-        }
-      
-        // waiting for user model @favour
-        // const existingUser = await UserModel.findOne({ email: existingToken.email });
-        // if (!existingUser) {
-        //   throw new Error("Invalid token");
-        // }
-        // const updateDatabase = await UserModel.findOneAndUpdate(
-        //   { email: existingToken.email },
-        //   { verified: true },
-        //   { new: true, runValidators: true }
-        // );
-        // await existingToken.deleteOne();
-      
-        return res.status(200).json({ message: "user verified", update: 'updateDatabase' });
+const verifyOtp = async (
+  req: Request,
+  res: Response
+): Promise<Response | undefined> => {
+  try {
+    const { otp } = req.body;
+    const sessionOtp = (req.session as any).otp;
+    if (sessionOtp && sessionOtp === otp) {
+      const user = (req.session as any).user;
+      if (!user) return res.sendStatus(HttpStatus.ServerError);
+      const hashedPassword = await hashPassword(user.password);
 
-     
-    } catch (error) {
-        return res
-      .status(500)
-      .json({
-        status: "Bad request",
-        message: "Internal server error",
-        error,
-        statusCode: "500",
+      const newUser = await User.create({
+        firstname: user.firstname,
+        lastname: user.lastname,
+        state: user.state,
+        email: user.email,
+        password: hashedPassword,
+      });
+
+      req.session.destroy((err) => {
+        if (err)
+          res
+            .status(HttpStatus.ServerError)
+            .json({ message: "Session could not be destroyed" });
+      });
+      return res.status(HttpStatus.Success).json({
+        status: "Success",
+        message: "User has been be registered and verified",
+        data: {
+          user: {
+            id: newUser._id,
+            email: newUser.email,
+          },
+        },
       });
     }
+  } catch (error) {
+    return res.status(500).json({
+      status: "Bad request",
+      message: "Internal server error",
+      error,
+      statusCode: "500",
+    });
+  }
 };
- export default verifyOtp;
+export default verifyOtp;
