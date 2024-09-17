@@ -8,7 +8,6 @@ import cors from 'cors';
 import corsOptions from './modules/common/config/corsOptions.config';''
 import morgan from 'morgan';
 import helmet from 'helmet';
-// import connectDB from './config/dbConn';
 import mongoose from 'mongoose';
 
 const app = express();
