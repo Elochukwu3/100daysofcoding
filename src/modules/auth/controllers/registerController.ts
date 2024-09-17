@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { validateRegisterInput } from "../models/User";
 import { HttpStatus } from "../../common/enums/StatusCodes";
-import { generateOtp } from "../../common/utils/generateToken";
+import { generateOtp } from "../utils/generateOtp";
 import sendOTPEmail from "../../common/utils/sendEmail";
 
 const registerUser = asyncHandler(

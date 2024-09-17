@@ -49,18 +49,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/auth/v1", authRoute);
 
-mongoose.connection.on("open", () => {
-  console.log("Mongoose connected to DB");
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-});
 
-mongoose.connection.on("error", (err) => {
-  console.error(`Mongoose connection error: ${err}`);
-  // logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, 'mongoErrLog.log');
-});
-
-mongoose.connection.on("disconnected", () => {
-  console.log("Mongoose disconnected");
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
