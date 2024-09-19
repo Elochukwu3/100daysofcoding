@@ -10,7 +10,10 @@ const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { firstname, lastname, state, email, password } = req.body;
     const { error } = validateRegisterInput(req.body);
+
+   
     if (error) {
+
       res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
         message: error.details[0].message,
