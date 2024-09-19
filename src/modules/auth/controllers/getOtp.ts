@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { Token, validateEmail } from "../models/token";
 import sendOTPEmail from "../../common/utils/sendEmail";
 import { generateOtp } from "../utils/generateOtp";
+import { HttpStatus } from "../../common/enums/StatusCodes";
 
 export const getOtp = async (
   req: Request,
@@ -13,7 +14,7 @@ export const getOtp = async (
     const { email } = req.query;
     const { error } = validateEmail({ email: email as string });
     if (error) {
-      return res.status(400).json({
+      return res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
         message: error?.message.replace(/\"/g, ""),
         statusCode: "400",
@@ -29,7 +30,7 @@ export const getOtp = async (
 
     await sendOTPEmail(email as string, OTP);
 
-    return res.status(200).json({
+    return res.status(HttpStatus.Success).json({
       status: "success",
       message: "OTP sent successfully",
       data: {
@@ -39,7 +40,7 @@ export const getOtp = async (
     });
   } catch (error) {
     return res
-      .status(500)
+      .status(HttpStatus.ServerError)
       .json({
         status: "Bad request",
         message: "Internal server error",
