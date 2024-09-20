@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
 const sendOTPEmail = async (email: string, token: string) => {
   try {

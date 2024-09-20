@@ -40,8 +40,9 @@ const verifyOtp = async (
         },
       });
     }
+    //response when the otp is not same as req,body
   } catch (error) {
-    return res.status(500).json({
+    return res.status(HttpStatus.ServerError).json({
       status: "Bad request",
       message: "Internal server error",
       error,
