@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { hashPassword } from "../../common/utils/hashPassword";
 import { HttpStatus } from "../../common/enums/StatusCodes";
-import { User } from "../models/User";
+import { User, validateOtpInput } from "../models/User";
+
 
 const verifyOtp = async (
   req: Request,
@@ -9,9 +10,37 @@ const verifyOtp = async (
 ): Promise<Response | undefined> => {
   try {
     const { otp } = req.body;
-    const sessionOtp = (req.session as any).otp;
+    const {error} = validateOtpInput(otp);
+    if (error) {
+      return res.status(HttpStatus.BadRequest).json({
+        status: "Bad request",
+        message: error.details[0].message,
+        statusCode: "400",
+      });
+    }
+    const sessionOtp = req.session.otp.value;
+    const expiredAt = req.session.otp.expires_at;
+    const currentTime = Date.now();
+    
+ 
+    if (currentTime > expiredAt) {
+      
+      return res.status(HttpStatus.BadRequest).json({
+        status: "Bad request",
+        message: "OTP has expired",
+        statusCode: "400",
+      });
+    }
+
+    if(sessionOtp !== otp){
+      return res.status(HttpStatus.BadRequest).json({
+        status: "Bad request",
+        message: "OTP does not match",
+        statusCode: "400",
+      });
+    } 
     if (sessionOtp && sessionOtp === otp) {
-      const user = (req.session as any).user;
+      const user = req.session.user;
       if (!user) return res.sendStatus(HttpStatus.ServerError);
       const hashedPassword = await hashPassword(user.password);
 
@@ -40,7 +69,8 @@ const verifyOtp = async (
         },
       });
     }
-    //response when the otp is not same as req,body
+   
+   
   } catch (error) {
     return res.status(HttpStatus.ServerError).json({
       status: "Bad request",

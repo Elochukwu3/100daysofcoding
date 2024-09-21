@@ -48,4 +48,12 @@ export const validateLoginInput = (data: any) => {
   return schema.validate(data);
 };
 
+export const validateOtpInput = (data:string) => {
+  const schema = Joi.string().length(6).required().messages({
+    "string.length": "OTP must be 6 characters long",
+    "any.required": "OTP is required",
+  });
+
+  return schema.validate(data);
+}
 export const User = mongoose.model<IUser>("User", userSchema);
