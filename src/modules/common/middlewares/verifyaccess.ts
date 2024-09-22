@@ -1,7 +1,7 @@
     import { Request, Response, NextFunction } from "express";
-    import { User } from "../../auth/models/User";
     import { HttpStatus } from "../../common/enums/StatusCodes";
     import verifyToken from "../../common/utils/verifyToken";
+   
 
    const changePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     
@@ -13,9 +13,8 @@
       }
     
       const token = HEADER.split(' ')[1];
-    
-  
       let decodedToken;
+
       try {
         decodedToken = verifyToken(token);
       } catch (error) {
@@ -29,14 +28,9 @@
         return;
       }
     
-     
-      const user = await User.findById(userId).exec();
-      if (!user) {
-        res.status(HttpStatus.NotFound).json({status:"Bad request", message: "User not found" });
-        return;
-      }
+      req.user = { id: userId };
+      next();
       //will add verification b y role too.
-      res.status(HttpStatus.Success).json({ message: "Password updated successfully" });
     };
     
     export default changePassword;
