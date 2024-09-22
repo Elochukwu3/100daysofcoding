@@ -3,7 +3,7 @@
     import verifyToken from "../../common/utils/verifyToken";
    
 
-   const changePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+   const verifyUserAcces = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     
       const HEADER = req.headers.authorization || req.headers.Authorization;
     
@@ -33,7 +33,7 @@
       //will add verification b y role too.
     };
     
-    export default changePassword;
+    export default verifyUserAcces ;
     
 
       // Implement JWT verification logic here

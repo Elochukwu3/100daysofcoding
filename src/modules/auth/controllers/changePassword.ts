@@ -4,7 +4,7 @@ import { HttpStatus } from "../../common/enums/StatusCodes";
 import { validatePassword } from "../../common/utils/validatePassword";
 import { hashPassword } from "../../common/utils/hashPassword";
 
-export const changePassword = 
+const changePassword = 
   async (req: Request, res: Response): Promise<void> => {
     const { oldPassword, newPassword } = req.body;
 
@@ -51,3 +51,4 @@ export const changePassword =
     res.status(HttpStatus.Success).json({status: "success", message: "Password updated successfully" });
   }
 
+  export  default changePassword;
