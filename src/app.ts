@@ -10,7 +10,7 @@ import helmet from "helmet";
 import sessionConfig from "./modules/common/config/sessionConfig";
 import  "./modules/common/config/db.config";
 import errorHandler from "./modules/common/middlewares/errorHandler";
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 app.use(cookieParser());
@@ -49,6 +49,6 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/auth/v1", authRoute);
 
 app.use(errorHandler)
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log('Server is running on port 3000');
 });

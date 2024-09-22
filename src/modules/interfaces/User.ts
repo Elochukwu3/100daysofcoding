@@ -13,3 +13,4 @@ export interface IUser extends Document {
   retypePassword?: string; // This field is for validation only, not stored in DB
   isVerified: boolean;
 }
+

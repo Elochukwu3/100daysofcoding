@@ -1,7 +1,7 @@
 import { User } from "../models/User";
 import jwt, {JwtPayload} from "jsonwebtoken";
 import { Request, Response } from "express";
-import { HttpStatus } from "@common/enums/StatusCodes";
+import { HttpStatus } from "../../common/enums/StatusCodes";
 import { generateAccessToken } from "../../common/utils/genAccessToken";
 
 export const refreshToken = async (req: Request, res: Response): Promise<Response | void> => {

@@ -5,6 +5,9 @@ import { validateRegisterInput } from "../models/User";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import { generateOtp } from "../utils/generateOtp";
 import sendOTPEmail from "../../common/utils/sendEmail";
+import "../../interfaces/session"
+
+const OTP_EXPIRY_TIME = 5 * 60 * 1000;
 
 const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -31,24 +34,30 @@ const registerUser = asyncHandler(
       });
       return;
     }
+    const otpExpiry = Date.now() + OTP_EXPIRY_TIME;
+    const OTP = await generateOtp();
     // store credentials in body to the session
-    (req.session as any).user = {
+
+    req.session.user = {
       firstname,
       lastname,
       state,
       email,
       password,
     };
-    const OTP = await generateOtp();
-    (req.session as any).otp = OTP;
-
+    req.session.otp = {
+      value: OTP,
+      expires_at: otpExpiry,
+    };
     const result = await sendOTPEmail(email as string, OTP);
 
     res.status(HttpStatus.Created).json({
       status: "success",
       message: result,
+      otp: OTP
     });
   }
 );
 
 export default registerUser;
+
