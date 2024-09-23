@@ -13,5 +13,9 @@ declare module "express-session" {
         value: string;
         expires_at: number;
       };
+      passwordReset:  {
+        otp: string;
+        expires_at: number;
+      };
     }
   }
