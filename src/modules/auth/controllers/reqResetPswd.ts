@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import asyncHandler from "express-async-handler";
 import { User } from "../models/User";
-import sendEmail from "../../common/utils/sendEmail";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import { generateOtp } from "../../auth/utils/generateOtp";
 import sendOTPEmail from "../../common/utils/sendEmail";
