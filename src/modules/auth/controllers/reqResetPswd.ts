@@ -7,7 +7,7 @@ import sendOTPEmail from "../../common/utils/sendEmail";
 const TOKEN_EXPIRY_TIME = 2 * 60 * 1000; //2 mins
 
 
-export const requestPasswordReset = 
+const requestPasswordReset = 
   async (req: Request, res: Response): Promise<Response> => {
     const { email } = req.body;
 
@@ -24,8 +24,10 @@ export const requestPasswordReset =
 
     // Set token and expiry in session
     req.session.passwordReset = {
+      email,
       otp: resetOtp,
       expires_at: Date.now() + TOKEN_EXPIRY_TIME,
+      isVerified: false,
     };
 
     const message = `You requested a password reset. Your 6-digit token is:`;
@@ -43,3 +45,5 @@ export const requestPasswordReset =
     }
   }
 ;
+
+export default requestPasswordReset;
