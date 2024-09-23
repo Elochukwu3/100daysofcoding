@@ -14,3 +14,10 @@ export interface IUser extends Document {
   isVerified: boolean;
 }
 
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: {
+      id?: string;
+    }
+  }
+}
