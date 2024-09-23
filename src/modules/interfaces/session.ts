@@ -14,8 +14,10 @@ declare module "express-session" {
         expires_at: number;
       };
       passwordReset:  {
-        otp: string;
+        otp?: string;
         expires_at: number;
+        isVerified?: boolean;
+        email: string;
       };
     }
   }
