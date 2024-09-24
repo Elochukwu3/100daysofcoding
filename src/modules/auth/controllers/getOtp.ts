@@ -28,7 +28,7 @@ export const getOtp = async (
       purpose: "email_verification",
     });
 
-    await sendOTPEmail(email as string, OTP);
+    await sendOTPEmail(email as string, OTP,  "Your one-time Email verification code is:");
 
     return res.status(HttpStatus.Success).json({
       status: "success",

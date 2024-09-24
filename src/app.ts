@@ -10,6 +10,7 @@ import helmet from "helmet";
 import sessionConfig from "./modules/common/config/sessionConfig";
 import  "./modules/common/config/db.config";
 import errorHandler from "./modules/common/middlewares/errorHandler";
+import apiKeyMiddleware from "./modules/common/middlewares/apiKey";
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -46,7 +47,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express!");
 });
 
-app.use("/auth/v1", authRoute);
+app.use("/auth/v1",apiKeyMiddleware, authRoute);
 
 app.use(errorHandler)
 app.listen(PORT, () => {
