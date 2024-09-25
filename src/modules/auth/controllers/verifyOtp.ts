@@ -18,11 +18,15 @@ const verifyOtp = async (
         statusCode: "400",
       });
     }
+    if (!req.session) {
+      res.locals.error = 'Session not found for request'; 
+      return res.status(HttpStatus.ServerError).json({ message: "No session found" });
+    }
     const sessionOtp = req.session.otp.value;
     const expiredAt = req.session.otp.expires_at;
     const currentTime = Date.now();
-    console.log('Session during OTP verification:', req.session);
- 
+   
+    
     if (currentTime > expiredAt) {
       
       return res.status(HttpStatus.BadRequest).json({
@@ -31,7 +35,7 @@ const verifyOtp = async (
         statusCode: "400",
       });
     }
-
+    
     if(sessionOtp !== otp){
       return res.status(HttpStatus.BadRequest).json({
         status: "Bad request",

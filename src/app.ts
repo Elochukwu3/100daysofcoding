@@ -43,6 +43,13 @@ app.use(helmet());
   }
 })();
 
+
+morgan.token('error', (req: Request, res: Response) => {
+  const error = res.locals.error || '';
+  return error ? `Error: ${JSON.stringify(error)}` : 'No error';
+});
+
+
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express!");
 });
