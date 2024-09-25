@@ -7,6 +7,11 @@ import { hashPassword } from "../../common/utils/hashPassword";
 const changePassword = 
   async (req: Request, res: Response): Promise<void> => {
     const { oldPassword, newPassword } = req.body;
+    
+    if (!oldPassword || !newPassword) {
+      res.status(HttpStatus.BadRequest).json({ status: "failed", message: "Old password and new password are required" });
+      return;
+    }
 
     const userId = req.user?.id
     if (!userId) {
@@ -22,19 +27,14 @@ const changePassword =
     }
 
     //chack old password validity
+    console.log(user);
+    
     const isMatch = await validatePassword(oldPassword, user.password);
     if (!isMatch) {
       res.status(HttpStatus.BadRequest).json({status:"Bad request", message: "Old password is incorrect" });
       return;
     }
-    //use new password to check old password validity
-    const ifNewisOld = await validatePassword(newPassword, user.password);
-    if(ifNewisOld) {
-      res.status(HttpStatus.BadRequest).json({status:"Bad request", message: "New password cannot be the same as the old password" });
-      return;
-    }
-
-    const {error} = validatePasswordInput(newPassword)
+    const {error} = validatePasswordInput({"password":newPassword})
     if(error){
       res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
@@ -43,7 +43,15 @@ const changePassword =
       });
       return;
     }
-    const hashedNewPassword = await hashPassword(newPassword);
+    
+    //use new password to check old password validity
+    const ifNewisOld = await validatePassword(newPassword, user.password);
+    if(ifNewisOld) {
+      res.status(HttpStatus.BadRequest).json({status:"Bad request", message: "New password cannot be the same as the old password" });
+      return;
+    }
+
+   const hashedNewPassword = await hashPassword(newPassword);
 
     user.password = hashedNewPassword;
     await user.save();
