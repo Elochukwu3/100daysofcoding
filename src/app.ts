@@ -58,5 +58,5 @@ app.use("/auth/v1",apiKeyMiddleware, authRoute);
 
 app.use(errorHandler)
 app.listen(PORT, () => {
-  console.log('Server is running on port 3000');
+  console.log(`Server is running on port ${PORT}`);
 });
