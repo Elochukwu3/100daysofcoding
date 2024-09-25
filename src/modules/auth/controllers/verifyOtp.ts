@@ -21,7 +21,7 @@ const verifyOtp = async (
     const sessionOtp = req.session.otp.value;
     const expiredAt = req.session.otp.expires_at;
     const currentTime = Date.now();
-    
+    console.log('Session during OTP verification:', req.session);
  
     if (currentTime > expiredAt) {
       
