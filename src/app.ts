@@ -2,6 +2,7 @@ import "dotenv/config";
 import "express-async-errors";
 import express, { Request, Response } from "express";
 import authRoute from "./modules/auth/routes/auth.routes";
+import stateRoute from "./modules/states/routes/states.routes";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import corsOptions from "./modules/common/config/corsOptions.config";
@@ -43,13 +44,25 @@ app.use(helmet());
   }
 })();
 
+
+morgan.token('error', (req: Request, res: Response) => {
+  const error = res.locals.error || '';
+  return error ? `Error: ${JSON.stringify(error)}` : 'No error';
+});
+morgan.token('state', (req: Request, res: Response) => {
+  const error = res.locals.state || '';
+  return error ? `Error: ${JSON.stringify(error)}` : 'No error';
+});
+
+
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express!");
 });
 
 app.use("/auth/v1",apiKeyMiddleware, authRoute);
+app.use("/api/v1", stateRoute)
 
 app.use(errorHandler)
 app.listen(PORT, () => {
-  console.log('Server is running on port 3000');
+  console.log(`Server is running on port ${PORT}`);
 });

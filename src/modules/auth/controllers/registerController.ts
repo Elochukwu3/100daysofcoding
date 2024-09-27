@@ -50,7 +50,15 @@ const registerUser = asyncHandler(
       expires_at: otpExpiry,
     };
     const result = await sendOTPEmail(email as string, OTP, "Your one-time Email verification code is:");
-
+    // console.log("Session before saving:", req.session);
+    // req.session.save(err => {
+    //   if (err) {
+    //     console.error("Error saving session:", err);
+    //   } else {
+    //     console.log("Session saved successfully.");
+    //   }
+    // });
+    
     res.status(HttpStatus.Created).json({
       status: "success",
       message: result,
