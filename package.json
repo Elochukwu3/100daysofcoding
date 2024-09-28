@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && copyfiles -u 4 src/modules/states/utils/nigeria.json dist/modules/states/utils",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": " node dist/app.js",
     "start:dev": "nodemon ./src/app.ts"
@@ -22,6 +22,7 @@
     "@types/node": "^22.5.1",
     "@types/nodemailer": "^6.4.15",
     "@types/uuid": "^10.0.0",
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
