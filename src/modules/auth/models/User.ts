@@ -15,9 +15,9 @@ const userSchema = new Schema<IUser>({
 
 export const validateRegisterInput = (data: any) => {
   const schema = Joi.object({
-    firstname: Joi.string().min(4).trim().required(),
-    lastname: Joi.string().min(4).trim().required(),
-    state: Joi.string().min(4).required(),
+    firstname: Joi.string().min(2).trim().required(),
+    lastname: Joi.string().min(2).trim().required(),
+    state: Joi.string().min(3).required(),
     email: Joi.string().email({ minDomainSegments: 2 }).required(),
     password: Joi.string()
       .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$"))
