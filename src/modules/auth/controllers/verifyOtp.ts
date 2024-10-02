@@ -11,10 +11,18 @@ const verifyOtp = async (
   try {
     const { otp } = req.body;
     const {error} = validateOtpInput(otp);
+
     if (error) {
       return res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
         message: error.details[0].message,
+        statusCode: "400",
+      });
+    }
+    if (!req.session.otp) {
+      return res.status(HttpStatus.BadRequest).json({
+        status: "Bad request",
+        message: "OTP has not been generated or assigned. Please request a new OTP.",
         statusCode: "400",
       });
     }
@@ -79,7 +87,7 @@ const verifyOtp = async (
     return res.status(HttpStatus.ServerError).json({
       status: "Bad request",
       message: "Internal server error",
-      error,
+      error: `${error} error`,
       statusCode: "500",
     });
   }
