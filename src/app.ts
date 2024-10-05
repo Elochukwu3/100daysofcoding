@@ -3,6 +3,7 @@ import "express-async-errors";
 import express, { Request, Response } from "express";
 import authRoute from "./modules/auth/routes/auth.routes";
 import stateRoute from "./modules/states/routes/states.routes";
+import userRoute from "./modules/user/routes/user.route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import corsOptions from "./modules/common/config/corsOptions.config";
@@ -61,6 +62,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/auth/v1",apiKeyMiddleware, authRoute);
 app.use("/api/v1", stateRoute)
+app.use("/api/v1", userRoute)
 
 app.use(errorHandler)
 app.listen(PORT, () => {
