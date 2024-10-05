@@ -7,6 +7,7 @@ import verifyUserAcces from "../../common/middlewares/verifyaccess";
 const router = Router();
 
 router.use(verifyUserAcces);
+router.get('/profile/', getUserProfile);
 router.get('/profile/:userId', getUserProfile);
 
 // router.put('/api/v1/profile/:userId', verifyUser, updateUserProfile);
