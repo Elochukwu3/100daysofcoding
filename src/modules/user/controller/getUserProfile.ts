@@ -31,7 +31,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
         res.status(HttpStatus.Success).json(
             {
                 status: "success",
-                data: userProfile,
+                data: remDetails,
                 statusCode: HttpStatus.Success,
             }
         );
