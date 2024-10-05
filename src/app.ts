@@ -1,18 +1,20 @@
 import "dotenv/config";
 import "express-async-errors";
+import 'tsconfig-paths/register';
 import express, { Request, Response } from "express";
-import authRoute from "./modules/auth/routes/auth.routes";
-import stateRoute from "./modules/states/routes/states.routes";
-import userRoute from "./modules/user/routes/user.route";
+import authRoute from "@auth/routes/auth.routes";
+import stateRoute from "@states/routes/states.routes";
+import userRoute from "@user/routes/user.route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import corsOptions from "./modules/common/config/corsOptions.config";
+import corsOptions from "@common/config/corsOptions.config";
 import morgan from "morgan";
 import helmet from "helmet";
-import sessionConfig from "./modules/common/config/sessionConfig";
-import  "./modules/common/config/db.config";
-import errorHandler from "./modules/common/middlewares/errorHandler";
-import apiKeyMiddleware from "./modules/common/middlewares/apiKey";
+import sessionConfig from "@common/config/sessionConfig";
+import  "@common/config/db.config";
+import errorHandler from "@common/middlewares/errorHandler";
+import apiKeyMiddleware from "@common/middlewares/apiKey";
+import path from "path";
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -56,13 +58,13 @@ morgan.token('state', (req: Request, res: Response) => {
 });
 
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript with Express!");
-});
+// app.get("/", (req: Request, res: Response) => {
+//   res.send("Hello, TypeScript with Express!");
+// });
 
 app.use("/auth/v1",apiKeyMiddleware, authRoute);
 app.use("/api/v1", stateRoute)
-app.use("/api/v1", userRoute);
+app.use("/user/v1", userRoute);
 
 app.all('*', (req, res) => {
   res.status(404)
