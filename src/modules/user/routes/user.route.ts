@@ -10,7 +10,7 @@ const router = Router();
 router.get('/profile/', getUserProfile);
 router.get('/profile/:userId', getUserProfile);
 
-// router.put('/api/v1/profile/:userId', verifyUser, updateUserProfile);
+
 
 // router.get('/api/v1/orders/:userId', verifyUser, getUserOrders);
 // router.put('/api/v1/payment/:userId', verifyUser, updatePaymentInformation);
