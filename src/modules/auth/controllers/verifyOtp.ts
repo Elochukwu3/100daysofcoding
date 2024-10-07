@@ -21,7 +21,7 @@ const verifyOtp = async (
     }
     if (!req.session.otp) {
       return res.status(HttpStatus.BadRequest).json({
-        status: "Bad request",
+        status: "Bad request",  
         message: "OTP has not been generated or assigned. Please request a new OTP.",
         statusCode: "400",
       });

@@ -12,7 +12,6 @@ import requestPasswordReset from "../../auth/controllers/reqResetPswd";
 
 const router = Router();
 
-
 router.post("/register", registerUser);
 router.post("/verify-otp", verifyOtp);
 router.post("/login", loginUser);
