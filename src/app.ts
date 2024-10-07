@@ -1,6 +1,7 @@
 import "dotenv/config";
 import "express-async-errors";
 import 'tsconfig-paths/register';
+import 'express-session'
 import express, { Request, Response } from "express";
 import authRoute from "@auth/routes/auth.routes";
 import stateRoute from "@states/routes/states.routes";
