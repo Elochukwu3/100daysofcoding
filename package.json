@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc && copyfiles -u 4 src/modules/states/utils/nigeria.json dist/modules/states/utils",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": " node dist/app.js",
+   "start": "node -r tsconfig-paths/register dist/app.js",
     "start:dev": "nodemon ./src/app.ts"
   },
   "keywords": [],
