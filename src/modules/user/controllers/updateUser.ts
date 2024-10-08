@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../../auth/models/User";
-import { HttpStatus } from "@common/enums/StatusCodes";
-import { validateUpdateProfileInput } from "@user/model/Updateuser";
+import { HttpStatus } from "../../common/enums/StatusCodes";
+import { validateUpdateProfileInput } from "../../user/model/Updateuser";
 
 export const updateUserProfile = async (req: Request, res: Response) => {
   const { error } = validateUpdateProfileInput(req.body);
