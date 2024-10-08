@@ -9,6 +9,7 @@ const userSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   isVerified: { type: Boolean, required: true, default: true },
+  address:{ type: String, required: false, }
 });
 
 // The Joi of validating client input
