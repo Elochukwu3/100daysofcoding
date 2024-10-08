@@ -10,11 +10,7 @@ const sessionConfig = session({
     collectionName: "sessions",
     ttl: 20 * 60,
   }),
-  // cookie: {
-  //   maxAge: 1000 * 60 * 20,
-  //   secure: process.env.NODE_ENV === "production" && !!process.env.USE_HTTPS,
-  //   httpOnly: true,
-  // }
+
   cookie: {
   maxAge: 1000 * 60 * 20,
   secure: process.env.NODE_ENV === "production",
