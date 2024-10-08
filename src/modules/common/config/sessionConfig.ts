@@ -16,12 +16,12 @@ const sessionConfig = session({
   //   httpOnly: true,
   // }
   cookie: {
-    maxAge: 1000 * 60 * 20,
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: 'none',  // Use 'strict' or 'lax' for same-site requests, 'none' for cross-domain
-  }
-  
+  maxAge: 1000 * 60 * 20,
+  secure: process.env.NODE_ENV === "production",
+  httpOnly: true,
+  sameSite: 'lax',  // Use 'strict' or 'lax' for same-site requests, 'none' for cross-domain
+}
+
   
 });
 
