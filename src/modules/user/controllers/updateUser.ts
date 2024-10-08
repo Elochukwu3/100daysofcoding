@@ -13,7 +13,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
   }
 
   const { userId } = req.params;
-  const { firstName, lastname, phoneNumber, email, address } = req.body;
+  const { firstname, lastname, phoneNumber, email, address } = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -27,7 +27,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         });
     }
 
-    if (firstName) user.firstname = firstName;
+    if (firstname) user.firstname = firstname;
     if (lastname) user.lastname = lastname;
     if (phoneNumber) user.phonenumber = phoneNumber;
     if (email) user.email = email;
