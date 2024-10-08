@@ -19,6 +19,7 @@ const verifyOtp = async (
         statusCode: "400",
       });
     }
+    
     if (!req.session.otp) {
       return res.status(HttpStatus.BadRequest).json({
         status: "Bad request",  
