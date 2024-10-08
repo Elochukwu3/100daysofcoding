@@ -1,4 +1,4 @@
-import { User } from "@auth/models/User";
+import { User } from "../../auth/models/User";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import { Request, Response } from "express";
 
