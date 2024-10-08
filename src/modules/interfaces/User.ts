@@ -12,6 +12,8 @@ export interface IUser extends Document {
   password: string;
   retypePassword?: string; // This field is for validation only, not stored in DB
   isVerified: boolean;
+  address?: string;
+  phonenumber?:string; //
 }
 
 declare module "express-serve-static-core" {

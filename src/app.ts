@@ -63,7 +63,7 @@ morgan.token('state', (req: Request, res: Response) => {
 //   res.send("Hello, TypeScript with Express!");
 // });
 
-app.use("/auth/v1",apiKeyMiddleware, authRoute);
+app.use("/auth/v1", authRoute);
 app.use("/api/v1", stateRoute)
 app.use("/user/v1", userRoute);
 
