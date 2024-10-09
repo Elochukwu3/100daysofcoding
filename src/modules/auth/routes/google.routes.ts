@@ -1,8 +1,11 @@
 import express, { Request, Response, Router } from "express";
 import passport from "passport";
 import { HttpStatus } from "../../common/enums/StatusCodes";
+import googleAuthSessionConfig from "../../common/config/googleSessionConfig";
 
 const router = Router();
+
+router.use(googleAuthSessionConfig);
 
 // Route to initiate Google authentication
 router.get(
@@ -11,7 +14,7 @@ router.get(
     scope: [
       "profile",
       "email",
-      "https://www.googleapis.com/auth/user.phonenumbers.read",
+      "https://www.googleapis.com/auth/contacts.readonly",
     ],
   })
 );
@@ -20,10 +23,10 @@ router.get(
 router.get(
   "/callback",
   passport.authenticate("google", {
-    failureRedirect: "/failure",
+    failureRedirect: "/auth/v1/google/failure",
   }),
   async (req: Request, res: Response) => {
-    res.redirect("/success");
+    res.redirect("/auth/v1/google/success");
   }
 );
 

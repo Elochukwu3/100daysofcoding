@@ -46,11 +46,11 @@
     // "allowArbitraryExtensions": true,                 /* Enable importing files with any extension, provided a declaration file is present. */
     // "noResolve": true,                                /* Disallow 'import's, 'require's or '<reference>'s from expanding the number of files TypeScript should add to a project. */
     "baseUrl": "./src",
-    "paths": {
-      "@auth/*": ["modules/auth/*"],
-      "@products/*": ["modules/products/*"],
-      "@common/*": ["modules/common/*"]
-    },
+    // "paths": {
+    //   "@auth/*": ["modules/auth/*"],
+    //   "@products/*": ["modules/products/*"],
+    //   "@common/*": ["modules/common/*"]
+    // },
     /* JavaScript Support */
     // "allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
     // "checkJs": true,                                  /* Enable error reporting in type-checked JavaScript files. */
@@ -114,6 +114,6 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "types": ["express-session"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"]
+  // "exclude": ["node_modules"]
 }
