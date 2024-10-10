@@ -1,7 +1,9 @@
 import "dotenv/config";
 import "express-async-errors";
 import 'tsconfig-paths/register';
-import 'express-session'
+import 'express-session';
+import cors from "cors";
+import corsOptions from "./modules/common/config/corsOptions.config";
 import stateRoute from "./modules/states/routes/states.routes";
 import userRoute from "./modules/user/routes/user.route";
 import "./modules/common/config/passportConfig";
@@ -12,17 +14,15 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import googleAuthSessionConfig from "./modules/common/config/googleSessionConfig";
 import otpSessionConfig from "./modules/common/config/otpSessionConfig";
-import cors from "cors";
-import corsOptions from "./modules/common/config/corsOptions.config";
+
 import morgan from "morgan";
 import helmet from "helmet";
-// import sessionConfig from "./modules/common/config/sessionConfig";
 import  "./modules/common/config/db.config";
 import errorHandler from "./modules/common/middlewares/errorHandler";
 import apiKeyMiddleware from "./modules/common/middlewares/apiKey";
 import path from "path";
-import "./modules/common/config/db.config";
-// import errorHandler from "./modules/common/middlewares/errorHandler";
+
+
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -72,10 +72,6 @@ morgan.token('state', (req: Request, res: Response) => {
   return error ? `Error: ${JSON.stringify(error)}` : 'No error';
 });
 
-
-// app.get("/", (req: Request, res: Response) => {
-//   res.send("Hello, TypeScript with Express!");
-// });
 
 app.use("/auth/v1", authRoute);
 app.use("/auth/v1/google", googleAuth);
