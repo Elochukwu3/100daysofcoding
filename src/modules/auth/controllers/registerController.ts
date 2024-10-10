@@ -5,14 +5,16 @@ import { validateRegisterInput } from "../models/User";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import { generateOtp } from "../utils/generateOtp";
 import sendOTPEmail from "../../common/utils/sendEmail";
-import "../../interfaces/session"
+import "../../interfaces/session";
+import { OTP_STATIC_VALUE } from "../../auth/static/otp.static";
 
-const OTP_EXPIRY_TIME = 5 * 60 * 1000;
+
 
 const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { firstname, lastname, state, email, password } = req.body;
     const { error } = validateRegisterInput(req.body);
+    const{OTP_EXPIRY_TIME} =OTP_STATIC_VALUE;
 
    
     if (error) {
