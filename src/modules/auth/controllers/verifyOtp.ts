@@ -3,55 +3,54 @@ import { hashPassword } from "../../common/utils/hashPassword";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import { User, validateOtpInput } from "../models/User";
 
-
 const verifyOtp = async (
   req: Request,
   res: Response
 ): Promise<Response | undefined> => {
   try {
     const { otp } = req.body;
-    const {error} = validateOtpInput(otp);
+    const { error } = validateOtpInput(otp);
 
     if (error) {
       return res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
         message: error.details[0].message,
-        statusCode: "400",
+        statusCode: HttpStatus.BadRequest,
       });
     }
-    
+ 
     if (!req.session.otp) {
       return res.status(HttpStatus.BadRequest).json({
-        status: "Bad request",  
+        status: "Bad request",
         message: "OTP has not been generated or assigned. Please request a new OTP.",
-        statusCode: "400",
+        statusCode: HttpStatus.BadRequest,
       });
     }
     if (!req.session) {
-      res.locals.error = 'Session not found for request'; 
-      return res.status(HttpStatus.ServerError).json({ message: "No session found" });
+      res.locals.error = "Session not found for request";
+      return res
+        .status(HttpStatus.ServerError)
+        .json({ message: "No session found" });
     }
     const sessionOtp = req.session.otp.value;
     const expiredAt = req.session.otp.expires_at;
     const currentTime = Date.now();
-   
-    
+
     if (currentTime > expiredAt) {
-      
       return res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
         message: "OTP has expired",
-        statusCode: "400",
+        statusCode: HttpStatus.BadRequest,
       });
     }
-    
-    if(sessionOtp !== otp){
+
+    if (sessionOtp !== otp) {
       return res.status(HttpStatus.BadRequest).json({
         status: "Bad request",
         message: "OTP does not match",
-        statusCode: "400",
+        statusCode: HttpStatus.BadRequest,
       });
-    } 
+    }
     if (sessionOtp && sessionOtp === otp) {
       const user = req.session.user;
       if (!user) return res.sendStatus(HttpStatus.ServerError);
@@ -80,10 +79,9 @@ const verifyOtp = async (
             email: newUser.email,
           },
         },
+        statusCode:HttpStatus.Success
       });
     }
-   
-   
   } catch (error) {
     return res.status(HttpStatus.ServerError).json({
       status: "Bad request",
