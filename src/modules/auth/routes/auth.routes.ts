@@ -14,17 +14,13 @@ import newRegistrationOtp from "../../auth/controllers/sendNewregOtp";
 
 
 const router = Router();
-
-// import refreshToken from "../controllers/refreshToken";
-// import changePassword from "../controllers/changePassword";
-
 router.use(otpSessionConfig);
 
 router.post("/register", registerUser);
 router.post("/verify-otp", verifyOtp);
 router.post("/login", loginUser);
 router.post("/refresh-token", refreshToken);
-router.post('/auth/v1/generate-otp', otpRateLimiter, newRegistrationOtp);
+router.post('/generate-otp', otpRateLimiter, newRegistrationOtp);
 
 router.use(verifyUserAcces)
 router.post("/change-password", changePassword);
