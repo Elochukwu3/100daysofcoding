@@ -8,11 +8,11 @@ import verifyUserAcces from "../../common/middlewares/verifyaccess";
 import verifyResetOtp from "../../auth/controllers/verifyResetOtp";
 import resetPassword from "../../auth/controllers/resetPswd";
 import requestPasswordReset from "../../auth/controllers/reqResetPswd";
+import otpSessionConfig from "../../common/config/otpSessionConfig";
 
 
 const router = Router();
 
-import otpSessionConfig from "../../common/config/otpSessionConfig";
 // import refreshToken from "../controllers/refreshToken";
 // import changePassword from "../controllers/changePassword";
 

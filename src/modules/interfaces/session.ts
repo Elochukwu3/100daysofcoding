@@ -8,6 +8,7 @@ declare module "express-session" {
         state: string;
         email: string;
         password: string;
+        accessToken?: string;
       };
       otp: {
         value: string;
@@ -21,20 +22,19 @@ declare module "express-session" {
       };
     }
   }
-import "express-session";
-import session from "express-session";
 
-declare module "express-session" {
-  interface Session {
-    user: {
-      id: string;
-      firstname: string;
-      lastname: string;
-      state: string;
-      email: string;
-      password: string;
-      accessToken: string;
-    };
-    otp: string;
-  }
-}
+
+// declare module "express-session" {
+//   interface Session {
+//     user: {
+//       id: string;
+//       firstname: string;
+//       lastname: string;
+//       state: string;
+//       email: string;
+//       password: string;
+     
+//     };
+//     otp: string;
+//   }
+// }

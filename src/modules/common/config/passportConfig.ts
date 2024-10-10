@@ -84,7 +84,7 @@ passport.deserializeUser(async (sessionData: SessionUser, done) => {
   try {
     const user = await GoogleUser.findOne({ googleId: sessionData.id });
     if (user) {
-      user.accessToken = sessionData.accessToken;
+      // user.accessToken = sessionData.accessToken;
       done(null, user);
     } else {
       done(new Error("User not found"), false);

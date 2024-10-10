@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import { IGoogleUser } from "modules/interfaces/IGoogleUser";
+// import { IGoogleUser } from "modules/interfaces/IGoogleUser";
 
-const googleSchema = new Schema<IGoogleUser>({
+const googleSchema = new Schema({
   googleId: {
     type: String,
     required: true,
@@ -32,4 +32,4 @@ const googleSchema = new Schema<IGoogleUser>({
   },
 });
 
-export default mongoose.model<IGoogleUser>("GoogleUser", googleSchema);
+export default mongoose.model("GoogleUser", googleSchema);

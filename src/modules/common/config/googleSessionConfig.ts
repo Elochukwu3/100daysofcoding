@@ -14,7 +14,7 @@ const googleAuthSessionConfig = session({
     maxAge: 1000 * 60 * 60 * 24, // 24 hours
     secure: process.env.NODE_ENV === "production",
     httpOnly: true,
-    sameSite: 'lax',  // Use 'strict' or 'lax' for same-site requests, 'none' for cross-domain
+    sameSite: 'lax',  
   }, // Closing brace for the cookie object
 }); // Closing brace for the session object
 
