@@ -2,14 +2,17 @@ import { Response, Request } from "express";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import { generateOtp } from "../utils/generateOtp2";
 import sendOTPEmail from "../../common/utils/sendEmail";
+import { OTP_STATIC_VALUE } from "../../auth/static/otp.static";
 
 
-const OTP_EXPIRY_TIME = 1 * 60 * 1000;
+const OTP_EXPIRY_TIME = 4 * 60 * 1000;
 
 const newRegistrationOtp = async (
   req: Request,
   res: Response
 ): Promise<Response | undefined> => {
+  const{OTP_EXPIRY_TIME} =OTP_STATIC_VALUE;
+  
     try {
         
         if (!req.session.otp) {
