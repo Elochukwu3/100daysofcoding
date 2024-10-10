@@ -4,7 +4,7 @@ import { generateOtp } from "../utils/generateOtp2";
 import sendOTPEmail from "../../common/utils/sendEmail";
 
 
-const OTP_EXPIRY_TIME = 5 * 60 * 1000;
+const OTP_EXPIRY_TIME = 1 * 60 * 1000;
 
 const newRegistrationOtp = async (
   req: Request,
@@ -15,7 +15,7 @@ const newRegistrationOtp = async (
         if (!req.session.otp) {
             return res.status(HttpStatus.BadRequest).json({
               status: "Bad request",
-              message: "OTP has not been generated or assigned. Please request a new OTP.",
+              message: "OTP ERROR:  Please complete the registration process to receive an OTP.",
               statusCode: HttpStatus.BadRequest,
             });
           }
@@ -34,7 +34,8 @@ const newRegistrationOtp = async (
           };
           const result = await sendOTPEmail(email as string, OTP, "Your one-time Email verification code is:");
 
-
+          console.log(req.session);
+          
           res.status(HttpStatus.Created).json({
             status: "success",
             message: result,
