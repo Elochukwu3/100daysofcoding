@@ -7,7 +7,7 @@ import { generateOtp } from "../utils/generateOtp";
 import sendOTPEmail from "../../common/utils/sendEmail";
 import "../../interfaces/session"
 
-const OTP_EXPIRY_TIME = 5 * 60 * 1000;
+const OTP_EXPIRY_TIME = 1 * 60 * 1000;
 
 const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
