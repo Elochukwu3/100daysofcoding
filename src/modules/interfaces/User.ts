@@ -1,8 +1,6 @@
 // src/interfaces/User.ts
 import { Document } from "mongoose";
 
-
-
 export interface IUser extends Document {
   _id: string;
   firstname: string;
@@ -22,4 +20,8 @@ declare module "express-serve-static-core" {
       id?: string;
     }
   }
+}
+export interface SessionUser {
+  id: string;
+  accessToken: string;
 }
