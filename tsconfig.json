@@ -117,4 +117,5 @@
     // "types": ["express-session"]
   },
   "include": ["src/**/*"]
+  // "exclude": ["node_modules"]
 }

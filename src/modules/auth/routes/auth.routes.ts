@@ -12,6 +12,12 @@ import requestPasswordReset from "../../auth/controllers/reqResetPswd";
 
 const router = Router();
 
+import otpSessionConfig from "../../common/config/otpSessionConfig";
+// import refreshToken from "../controllers/refreshToken";
+// import changePassword from "../controllers/changePassword";
+
+router.use(otpSessionConfig);
+
 router.post("/register", registerUser);
 router.post("/verify-otp", verifyOtp);
 router.post("/login", loginUser);

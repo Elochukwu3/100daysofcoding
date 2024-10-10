@@ -1,8 +1,6 @@
 // src/interfaces/User.ts
 import { Document } from "mongoose";
 
-
-
 export interface IUser extends Document {
   _id: string;
   firstname: string;
@@ -16,10 +14,14 @@ export interface IUser extends Document {
   phonenumber?:string; //
 }
 
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: {
-      id?: string;
-    }
-  }
+// declare module "express-serve-static-core" {
+//   interface Request {
+//     user?: {
+//       id?: string;
+//     }
+//   }
+// }
+export interface SessionUser {
+  id: string;
+  accessToken: string;
 }
