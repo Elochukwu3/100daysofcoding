@@ -5,20 +5,28 @@ export interface IUser extends Document {
   _id: string;
   firstname: string;
   lastname: string;
-  state: string;
+  state?: string;
   email: string;
-  password: string;
+  password?: string;
+  profilePicture: string | null;
   retypePassword?: string; // This field is for validation only, not stored in DB
   isVerified: boolean;
   address?: string;
-  phonenumber?:string; //
+  phonenumber?: string;
+  provider?: [string];
+  roles: {
+    User: Number;
+    Admin?: Number;
+  };
+  refreshToken: String;
 }
 
 declare module "express-serve-static-core" {
   interface Request {
     user?: {
       id?: string;
-    }
+      roles?: number[];
+    };
   }
 }
 export interface SessionUser {

@@ -1,7 +1,7 @@
 import passport, { Profile } from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { google } from "googleapis";
-import GoogleUser from "../../auth/models/GoogleUser";
+import { User } from "../../auth/models/User";
 import { SessionUser } from "../../interfaces/User";
 import { generateRefreshToken } from "../../common/utils/genRefreshToken";
 import { generateAccessToken } from "../utils/genAccessToken";
@@ -22,8 +22,15 @@ passport.use(
       try {
         const oauth2Client = new google.auth.OAuth2();
         oauth2Client.setCredentials({ access_token: accessToken });
+        let useremail =
+          profile.emails && profile.emails.length > 0
+            ? profile.emails[0].value
+            : null;
         // Find or create user in the database
-        let userDB = await GoogleUser.findOne({ googleId: profile.id });
+        let userDB = await User.findOne({ _id: profile.id });
+        let userEmail = await User.findOne({ email: useremail });
+        if (!userEmail)
+          return done(new Error("Email already used by another user"));
         if (!userDB) {
           const response = await google
             .people({ version: "v1", auth: oauth2Client })
@@ -39,11 +46,10 @@ passport.use(
             : null;
 
           const myRefreshToken = generateRefreshToken(profile.id);
-          const myAccessToken = generateAccessToken(profile.id);
 
-          userDB = await GoogleUser.create({
-            googleId: profile.id,
-            name: profile.displayName,
+          userDB = await User.create({
+            firstname: profile.name?.familyName,
+            lastname: profile.name?.givenName,
             email:
               profile.emails && profile.emails.length > 0
                 ? profile.emails[0].value
@@ -51,15 +57,19 @@ passport.use(
             phoneNumber,
             profilePicture,
             refreshToken: myRefreshToken,
+            provider: [profile.provider],
           });
+          const roles = Object.values(userDB.roles) as number[];
+          const myAccessToken = generateAccessToken(profile.id, roles);
           const sessionUser: SessionUser = {
             id: profile.id,
             accessToken: myAccessToken,
           };
           done(null, sessionUser);
         } else {
+          const roles = Object.values(userDB.roles) as number[];
           const myRefreshToken = generateRefreshToken(profile.id);
-          const myAccessToken = generateAccessToken(profile.id);
+          const myAccessToken = generateAccessToken(profile.id, roles);
           userDB.refreshToken = myRefreshToken;
           await userDB.save();
           const sessionUser = {
@@ -82,7 +92,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (sessionData: SessionUser, done) => {
   try {
-    const user = await GoogleUser.findOne({ googleId: sessionData.id });
+    const user = await User.findOne({ _id: sessionData.id });
     if (user) {
       // user.accessToken = sessionData.accessToken;
       done(null, user);
