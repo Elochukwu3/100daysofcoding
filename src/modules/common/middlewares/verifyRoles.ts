@@ -7,7 +7,7 @@ const verifyRoles = (...allowedRoles: number[]) => {
     if (!roles)
       return res.status(HttpStatus.Unauthorized).json({
         status: "Failed",
-        message: "User Unauthorized",
+        message: "No assigned roles to user",
         statusCode: HttpStatus.Unauthorized,
       });
     const rolesArray = [...allowedRoles];
