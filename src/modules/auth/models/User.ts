@@ -75,3 +75,16 @@ export const validateOtpInput = (data:string) => {
   return schema.validate(data);
 }
 export const User = mongoose.model<IUser>("User", userSchema);
+
+// const userSchema = new Schema<IUser>({
+//   firstname: { type: String, required: false },  // Optional for Google users
+//   lastname: { type: String, required: false },   // Optional for Google users
+//   state: { type: String, required: false },      // Optional for Google users
+//   email: { type: String, required: true, unique: true },
+//   password: { type: String, required: false },   // Optional for Google users
+//   isVerified: { type: Boolean, required: true, default: false },
+//   address: { type: String, required: false },
+//   googleId: { type: String, required: false },   // Google-specific field
+//   provider: { type: String, enum: ['local', 'google'], default: 'local' },  // To differentiate users
+// });
+
