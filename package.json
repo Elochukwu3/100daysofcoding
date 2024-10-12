@@ -54,6 +54,7 @@
     "nodemailer": "^6.9.15",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "redis": "^4.7.0",
     "uuid": "^10.0.0"
   }
 }
