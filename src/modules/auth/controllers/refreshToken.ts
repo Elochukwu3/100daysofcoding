@@ -23,8 +23,8 @@ export const refreshToken = async (req: Request, res: Response): Promise<Respons
     if (!foundUser) {
       return res.status(HttpStatus.Unauthorized).json({ message: 'Unauthorized' });
     }
-
-    const accessToken = generateAccessToken(foundUser._id )
+    const roles = Object.values(foundUser.roles);
+    const accessToken = generateAccessToken(foundUser._id, roles )
     return res.json({ accessToken });
   });
 };
