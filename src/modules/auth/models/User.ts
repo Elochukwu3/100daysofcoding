@@ -6,10 +6,21 @@ const userSchema = new Schema<IUser>({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   state: { type: String, required: true },
+  profilePicture: { type: String, required: false },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
   isVerified: { type: Boolean, required: true, default: true },
-  address:{ type: String, required: false, }
+  address: { type: String, required: false },
+  provider: {
+    type: [String],
+    required: true,
+    default: ["local"],
+  },
+  roles: {
+    Admin: { type: Number },
+    User: { type: Number, default: 1000, required: true },
+  },
+  refreshToken: { type: String },
 });
 
 // The Joi of validating client input
@@ -66,14 +77,14 @@ export const validateLoginInput = (data: any) => {
   return schema.validate(data);
 };
 
-export const validateOtpInput = (data:string) => {
+export const validateOtpInput = (data: string) => {
   const schema = Joi.string().length(6).required().messages({
     "string.length": "OTP must be 6 characters long",
     "any.required": "OTP is required",
   });
 
   return schema.validate(data);
-}
+};
 export const User = mongoose.model<IUser>("User", userSchema);
 
 // const userSchema = new Schema<IUser>({

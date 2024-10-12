@@ -28,7 +28,10 @@ const loginUser = expressAsyncHandler(
       });
       return;
     }
-    const checkPassword = await validatePassword(password, user.password);
+    const checkPassword = await validatePassword(
+      password,
+      user.password as string
+    );
     if (!checkPassword) {
       res.status(HttpStatus.BadRequest).json({
         status: "Bad Request",
@@ -38,7 +41,8 @@ const loginUser = expressAsyncHandler(
       return;
     }
     try {
-      const accessToken = generateAccessToken(user._id);
+      const roles = Object.values(user.roles) as number[];
+      const accessToken = generateAccessToken(user._id, roles);
       const refreshToken = generateRefreshToken(user._id);
 
       res.cookie("refreshToken", refreshToken, {
