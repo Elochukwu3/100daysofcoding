@@ -77,25 +77,21 @@ export const validateLoginInput = (data: any) => {
   return schema.validate(data);
 };
 
-export const validateOtpInput = (data: string) => {
-  const schema = Joi.string().length(6).required().messages({
-    "string.length": "OTP must be 6 characters long",
-    "any.required": "OTP is required",
+export const validateOtpInput = (data: { email: string; otp: string }) => {
+  const schema = Joi.object({
+    email: Joi.string().email({ minDomainSegments: 2 }).required().messages({
+      "string.email": "Email must be a valid email",
+      "any.required": "Email is required",
+    }),
+    otp: Joi.string().length(6).required().messages({
+      "string.length": "OTP must be 6 characters long",
+      "any.required": "OTP is required",
+    }),
   });
 
   return schema.validate(data);
 };
+
 export const User = mongoose.model<IUser>("User", userSchema);
 
-// const userSchema = new Schema<IUser>({
-//   firstname: { type: String, required: false },  // Optional for Google users
-//   lastname: { type: String, required: false },   // Optional for Google users
-//   state: { type: String, required: false },      // Optional for Google users
-//   email: { type: String, required: true, unique: true },
-//   password: { type: String, required: false },   // Optional for Google users
-//   isVerified: { type: Boolean, required: true, default: false },
-//   address: { type: String, required: false },
-//   googleId: { type: String, required: false },   // Google-specific field
-//   provider: { type: String, enum: ['local', 'google'], default: 'local' },  // To differentiate users
-// });
 
