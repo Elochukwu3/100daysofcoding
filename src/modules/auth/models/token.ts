@@ -2,7 +2,7 @@ import { Request } from 'express';
 import mongoose from "mongoose";
 import Joi from "joi";
 
-// Define the schema for the tokens collection
+
 const tokenSchema = new mongoose.Schema({
   token: { type: String, required: true, unique: true },
   email: {
@@ -11,18 +11,12 @@ const tokenSchema = new mongoose.Schema({
     ref: "user",
     unique: true,
   },
-
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  //   ipAddress: { type: String, required: true },
-  //   userAgent: { type: String, required: true },
-  //   revoked: { type: Boolean, default: false },
-  //   revokedAt: { type: Date },
-  createdAt: { type: Date, default: Date.now },
-  expiresAt: {
+  created_at: { type: Date, default: Date.now },
+  expires_at: {
     type: Date,
     required: true,
     default:  function () {
-      return new Date(Date.now() + 7 * 60 * 1000);
+      return new Date(Date.now() + 4 * 60 * 1000);
     },
   },
   purpose: {
