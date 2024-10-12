@@ -4,59 +4,85 @@ import { HttpStatus } from "../../common/enums/StatusCodes";
 import { validatePassword } from "../../common/utils/validatePassword";
 import { hashPassword } from "../../common/utils/hashPassword";
 
-const changePassword = 
-  async (req: Request, res: Response): Promise<void> => {
-    const { oldPassword, newPassword } = req.body;
-    
-    if (!oldPassword || !newPassword) {
-      res.status(HttpStatus.BadRequest).json({ status: "failed", message: "Old password and new password are required" });
-      return;
-    }
+const changePassword = async (req: Request<{}, {}, {oldPassword: string, newPassword: string}>, res: Response): Promise<void> => {
+  const { oldPassword, newPassword } = req.body;
 
-    const userId = req.user?.id
-    if (!userId) {
-      res.status(HttpStatus.Unauthorized).json({status:"Bad request", message: "Unauthorized" });
-      return;
-    }
-
-   
-    const user = await User.findById(userId).exec();
-    if (!user) {
-      res.status(HttpStatus.NotFound).json({ status:"Bad request", message: "User not found" });
-      return;
-    }
-
-    //chack old password validity
-    console.log(user);
-    
-    const isMatch = await validatePassword(oldPassword, user.password);
-    if (!isMatch) {
-      res.status(HttpStatus.BadRequest).json({status:"Bad request", message: "Old password is incorrect" });
-      return;
-    }
-    const {error} = validatePasswordInput({"password":newPassword})
-    if(error){
-      res.status(HttpStatus.BadRequest).json({
-        status: "Bad request",
-        message: error.details[0].message,
-        statusCode: "400",
-      });
-      return;
-    }
-    
-    //use new password to check old password validity
-    const ifNewisOld = await validatePassword(newPassword, user.password);
-    if(ifNewisOld) {
-      res.status(HttpStatus.BadRequest).json({status:"Bad request", message: "New password cannot be the same as the old password" });
-      return;
-    }
-
-   const hashedNewPassword = await hashPassword(newPassword);
-
-    user.password = hashedNewPassword;
-    await user.save();
-
-    res.status(HttpStatus.Success).json({status: "success", message: "Password updated successfully" });
+  if (!newPassword) {
+    res.status(HttpStatus.BadRequest).json({
+      status: "failed",
+      message: "New password is required",
+      statusCode: HttpStatus.BadRequest
+    });
+    return;
   }
 
-  export  default changePassword;
+  const userId = req.user?.id;
+  if (!userId) {
+    res.status(HttpStatus.Unauthorized).json({
+      status: "failed",
+      message: "Unauthorized",
+      statusCode: HttpStatus.Unauthorized
+    });
+    return;
+  }
+
+  const user = await User.findById(userId).exec();
+  if (!user) {
+    res.status(HttpStatus.NotFound).json({
+      status: "failed",
+      message: "User not found",
+      statusCode: HttpStatus.NotFound
+    });
+    return;
+  }
+
+  // Check if user logged in with Google or other OAuth provider
+  
+  if (!user.password || (user.provider?.includes('google') ?? false)) {
+    res.status(HttpStatus.BadRequest).json({
+      status: "failed",
+      message: "Cannot change password for Google OAuth users",
+    });
+    return;
+  }
+
+  // If user logged in via local account, proceed with password validation
+  const isMatch = await validatePassword(oldPassword, user.password);
+  if (!isMatch) {
+    res.status(HttpStatus.BadRequest).json({
+      status: "failed",
+      message: "Old password is incorrect",
+    });
+    return;
+  }
+
+  const { error } = validatePasswordInput({ password: newPassword });
+  if (error) {
+    res.status(HttpStatus.BadRequest).json({
+      status: "failed",
+      message: error.details[0].message,
+    });
+    return;
+  }
+
+  const isNewPasswordSame = await validatePassword(newPassword, user.password);
+  if (isNewPasswordSame) {
+    res.status(HttpStatus.BadRequest).json({
+      status: "failed",
+      message: "New password cannot be the same as the old password",
+    });
+    return;
+  }
+
+  // Hash the new password and save it
+  const hashedNewPassword = await hashPassword(newPassword);
+  user.password = hashedNewPassword;
+  await user.save();
+
+  res.status(HttpStatus.Success).json({
+    status: "success",
+    message: "Password updated successfully",
+  });
+};
+
+export default changePassword;
