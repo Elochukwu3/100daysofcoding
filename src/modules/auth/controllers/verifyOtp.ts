@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import { User, validateOtpInput } from "../models/User";
 import redisClient from "../../common/config/redisClient";
+import { generateAccessToken } from "../../common/utils/genAccessToken";
+import { generateRefreshToken } from "../../common/utils/genRefreshToken";
+import { setTokens } from "@auth/utils/tokenGenerator";
 
 const verifyOtp = async (
   req: Request<{}, {}, { otp: string; email: string }>,
@@ -59,18 +62,11 @@ const verifyOtp = async (
       });
 
       await redisClient.del(email);
+      // const roles = Object.values(newUser.roles) as number[];
+      const accessToken = generateAccessToken(newUser._id, newUser.roles);
+      const refreshToken = generateRefreshToken(newUser._id);
 
-      return res.status(HttpStatus.Success).json({
-        status: "Success",
-        message: "User has been be registered and verified",
-        data: {
-          user: {
-            id: newUser._id,
-            email: newUser.email,
-          },
-        },
-        statusCode:HttpStatus.Success
-      });
+      await setTokens(res, accessToken, refreshToken, newUser._id);
 
   } catch (error) {
     return res.status(HttpStatus.ServerError).json({
