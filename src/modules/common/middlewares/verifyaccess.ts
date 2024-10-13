@@ -2,49 +2,49 @@ import { Request, Response, NextFunction } from "express";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import verifyToken from "../../common/utils/verifyToken";
 
-const verifyUserAcces = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  const HEADER = req.headers.authorization || req.headers.Authorization;
+const verifyUserAcces = (requiredRoles = ["User", "Admin"]) => {
 
-  if (typeof HEADER !== "string" || !HEADER.startsWith("Bearer ")) {
-    res
-      .status(HttpStatus.Unauthorized)
-      .json({ message: "Unauthorized: No token provided" });
-    return;
-  }
+  return async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+    const HEADER = req.headers.authorization || req.headers.Authorization;
 
-  const token = HEADER.split(" ")[1];
-  let decodedToken;
+    if (typeof HEADER !== "string" || !HEADER.startsWith("Bearer ")) {
+      return res.status(HttpStatus.Unauthorized).json({ message: "Unauthorized: No token provided" });
+    }
 
-  try {
-    decodedToken = verifyToken(token);
-  } catch (error) {
-    res
-      .status(HttpStatus.Forbiddden)
-      .json({ status: "Bad request", message: "Forbidden: Invalid token" });
-    return;
-  }
+    const token = HEADER.split(" ")[1];
+    let decodedToken;
 
-  const userId = decodedToken.userInfo.id;
-  const roles = decodedToken.useerInfo.roles;
-  if (!userId) {
-    res
-      .status(HttpStatus.Unauthorized)
-      .json({ status: "Bad request", message: "Unauthorized: Invalid user" });
-    return;
-  }
+    try {
+      decodedToken = verifyToken(token);
+    } catch (error) {
+ 
+      if (error instanceof Error) {
+        if (error.name === "TokenExpiredError") {
+          return res.status(HttpStatus.Unauthorized).json({ message: "Token expired" });
+        } else if (error.name === "JsonWebTokenError") {
+          return res.status(HttpStatus.Forbiddden).json({ message: "Invalid token" });
+        }
+        return res.status(HttpStatus.Forbiddden).json({ message: `Forbidden: ${error.message}` });
+      }
+      return res.status(HttpStatus.Forbiddden).json({ message: "An unknown error occurred" });
+    }
 
-  req.user = { id: userId, roles };
-  next();
-  //will add verification by role too.
+    const userId = decodedToken.userInfo?.id;
+    const roles = decodedToken.userInfo?.roles || [];
+
+    if (!userId) {
+      return res.status(HttpStatus.Unauthorized).json({ message: "Unauthorized: Invalid user" });
+    }
+
+    const hasAccess = requiredRoles.every(role => roles.includes(role));
+
+    if (!hasAccess) {
+      return res.status(HttpStatus.Forbiddden).json({ message: "Forbidden: Insufficient role privileges" });
+    }
+
+    req.user = { id: userId, roles };
+    next();
+  };
 };
 
 export default verifyUserAcces;
-
-// Implement JWT verification logic here
-// Check if the user is authenticated and has the required role
-// If the user is authenticated and has the required role, call next() to proceed with the request
-// If the user is not authenticated or does not have the required role, respond with an appropriate error message
