@@ -36,8 +36,7 @@ const changePassword = async (req: Request<{}, {}, {oldPassword: string, newPass
     return;
   }
 
-  // Check if user logged in with Google or other OAuth provider
-  
+ 
   if (!user.password || (user.provider?.includes('google') ?? false)) {
     res.status(HttpStatus.BadRequest).json({
       status: "failed",
@@ -46,7 +45,7 @@ const changePassword = async (req: Request<{}, {}, {oldPassword: string, newPass
     return;
   }
 
-  // If user logged in via local account, proceed with password validation
+  
   const isMatch = await validatePassword(oldPassword, user.password);
   if (!isMatch) {
     res.status(HttpStatus.BadRequest).json({
@@ -83,6 +82,7 @@ const changePassword = async (req: Request<{}, {}, {oldPassword: string, newPass
     status: "success",
     message: "Password updated successfully",
   });
+  return;
 };
 
 export default changePassword;
