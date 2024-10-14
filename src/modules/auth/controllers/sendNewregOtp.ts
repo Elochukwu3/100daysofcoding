@@ -3,56 +3,68 @@ import { HttpStatus } from "../../common/enums/StatusCodes";
 import { generateOtp } from "../utils/generateOtp2";
 import sendOTPEmail from "../../common/utils/sendEmail";
 import { OTP_STATIC_VALUE } from "../../auth/static/otp.static";
-
-
-const OTP_EXPIRY_TIME = 4 * 60 * 1000;
+import redisClient from "../../common/config/redisClient";
 
 const newRegistrationOtp = async (
   req: Request,
   res: Response
 ): Promise<Response | undefined> => {
-  const{OTP_EXPIRY_TIME} =OTP_STATIC_VALUE;
-  
-    try {
-        
-        if (!req.session.otp) {
-            return res.status(HttpStatus.BadRequest).json({
-              status: "Bad request",
-              message: "OTP ERROR:  Please complete the registration process to receive an OTP.",
-              statusCode: HttpStatus.BadRequest,
-            });
-          }
-          if (!req.session) {
-            res.locals.error = "Session not found for request";
-            return res
-              .status(HttpStatus.ServerError)
-              .json({ message: "No session found" });
-          }
-          const otpExpiry = Date.now() + OTP_EXPIRY_TIME;
-          const OTP = await generateOtp();
-          const { email} = req.session.user
-          req.session.otp = {
-            value: OTP,
-            expires_at: otpExpiry,
-          };
-          const result = await sendOTPEmail(email as string, OTP, "Your one-time Email verification code is:");
+  const { OTP_EXPIRY_TIME } = OTP_STATIC_VALUE;  
 
-          console.log(req.session);
-          
-          res.status(HttpStatus.Created).json({
-            status: "success",
-            message: result,
-            otp: OTP
-          });
-    } catch (error) {
-        return res.status(HttpStatus.ServerError).json({
-            status: "Bad request",
-            message: "Internal server error",
-            error: `${error} error`,
-            statusCode: HttpStatus.ServerError,
-          });
+  try {
+    const { email } = req.body;  
+
+    if (!email) {
+      return res.status(HttpStatus.BadRequest).json({
+        status: "Bad request",
+        message: "Email is required to generate an OTP.",
+        statusCode: HttpStatus.BadRequest,
+      });
     }
-};
 
+    
+    const userData = await redisClient.get(email);
+    if (!userData) {
+      return res.status(HttpStatus.BadRequest).json({
+        status: "Bad request",
+        message: "No registration data found for this email. Please start the registration process.",
+        statusCode: HttpStatus.BadRequest,
+      });
+    }
+
+    const user = JSON.parse(userData);  
+
+  
+    const otpExpiry = Date.now() + OTP_EXPIRY_TIME;
+    const OTP = await generateOtp();
+
+   
+    await redisClient.setEx(
+      email,
+      OTP_EXPIRY_TIME / 1000, 
+      JSON.stringify({
+        ...user,  
+        otp: OTP,
+        expiresAt: otpExpiry,
+      })
+    );
+
+
+    const result = await sendOTPEmail(email as string, OTP, "Your new one-time Email verification code is:");
+    
+    res.status(HttpStatus.Created).json({
+      status: "success",
+      message: result,
+      otp: OTP,  //remeber to hide on production
+    });
+  } catch (error) {
+    return res.status(HttpStatus.ServerError).json({
+      status: "error",
+      message: "Internal server error",
+      error: `${error} error`,
+      statusCode: HttpStatus.ServerError,
+    });
+  }
+};
 
 export default newRegistrationOtp;

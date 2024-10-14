@@ -16,7 +16,7 @@ const sendOTPEmail = async (email: string, token: string, message:string) => {
     
             <h1 style="color: #333;">Ecommerce</h1>
     
-            <p>{message}</p>
+            <p>${message}</p>
     
             <h2 style="color: #333; font-size: 24px;">${token}</h2>
     

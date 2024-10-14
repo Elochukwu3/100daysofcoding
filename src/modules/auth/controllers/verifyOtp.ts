@@ -65,7 +65,9 @@ const verifyOtp = async (
       // const roles = Object.values(newUser.roles) as number[];
       const accessToken = generateAccessToken(newUser._id, newUser.roles);
       const refreshToken = generateRefreshToken(newUser._id);
-
+      newUser.refreshToken = refreshToken;
+      
+      await newUser.save();
       await setTokens(res, accessToken, refreshToken, newUser._id);
 
   } catch (error) {

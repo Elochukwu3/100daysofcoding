@@ -21,18 +21,19 @@ export const refreshToken = async (req: Request, res: Response): Promise<Respons
       return res.status(HttpStatus.Forbiddden).json({ message: 'Forbidden: Invalid token' });
     }
 
-    if (!decoded || !(decoded as any).userInfo?.id) {
+    // Check if decoded is a JwtPayload (an object), not a string
+    if (typeof decoded !== 'object' || !decoded || !(decoded as JwtPayload).id) {
       return res.status(HttpStatus.Unauthorized).json({ message: 'Unauthorized: Invalid token data' });
     }
-    const userId = (decoded as any).userInfo.id;
-  
+
+    const userId = (decoded as JwtPayload).id;
+
     const foundUser = await User.findOne({ _id: userId }).exec();
-    
+
     if (!foundUser) {
       return res.status(HttpStatus.Unauthorized).json({ message: 'Unauthorized: User not found' });
     }
 
-    
     if (foundUser.refreshToken !== refreshToken) {
       return res.status(HttpStatus.Forbiddden).json({ message: 'Forbidden: Refresh token mismatch' });
     }
