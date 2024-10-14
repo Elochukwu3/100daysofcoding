@@ -20,7 +20,7 @@ const loginUser = expressAsyncHandler(
       });
       return;
     }
-    const user = await User.findOne({ email }).lean().exec();
+    const user = await User.findOne({ email }).exec();
     if (!user) {
       res.status(HttpStatus.BadRequest).json({
         status: "Bad Request",
