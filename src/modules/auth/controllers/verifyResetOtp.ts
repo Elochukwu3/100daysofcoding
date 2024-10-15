@@ -1,10 +1,18 @@
 import { Request, Response } from "express";
 import { HttpStatus } from "../../common/enums/StatusCodes";
-import redisClient from "../../common/config/redisClient"; // Redis client instance
+import redisClient from "../../common/config/redisClient"; 
+import { validateOtpInput } from "../models/User";
 
 const verifyResetOtp = async (req: Request, res: Response): Promise<Response> => {
   const { otp, email } = req.body;
-
+  const { error } = validateOtpInput({ otp, email });
+  if (error) {
+    return res.status(HttpStatus.BadRequest).json({
+      status: "Bad request",
+      message: error.details[0].message,
+      statusCode: HttpStatus.BadRequest,
+    });
+  }
 
   const userOtpData = await redisClient.get(email);
 
