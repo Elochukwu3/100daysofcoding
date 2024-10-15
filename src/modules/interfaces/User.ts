@@ -15,8 +15,8 @@ export interface IUser extends Document {
   phonenumber?: string;
   provider?: [string];
   roles: {
-    User: Number;
-    Admin?: Number;
+    User: number;
+    Admin?: number;
   };
   refreshToken: String;
 }

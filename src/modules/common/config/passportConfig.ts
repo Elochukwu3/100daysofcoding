@@ -59,8 +59,8 @@ passport.use(
             refreshToken: myRefreshToken,
             provider: [profile.provider],
           });
-          const roles = Object.values(userDB.roles) as number[];
-          const myAccessToken = generateAccessToken(profile.id, roles);
+          // const roles = Object.values(userDB.roles) as number[];
+          const myAccessToken = generateAccessToken(profile.id, userDB.roles);
           const sessionUser: SessionUser = {
             id: profile.id,
             accessToken: myAccessToken,
@@ -69,7 +69,7 @@ passport.use(
         } else {
           const roles = Object.values(userDB.roles) as number[];
           const myRefreshToken = generateRefreshToken(profile.id);
-          const myAccessToken = generateAccessToken(profile.id, roles);
+          const myAccessToken = generateAccessToken(profile.id, userDB.roles);
           userDB.refreshToken = myRefreshToken;
           await userDB.save();
           const sessionUser = {

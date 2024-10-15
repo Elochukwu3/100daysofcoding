@@ -22,8 +22,8 @@ router.post("/login", loginUser);
 router.post("/refresh-token", refreshToken);
 router.post('/generate-otp', otpRateLimiter, newRegistrationOtp);
 
-router.use(verifyUserAcces)
-router.post("/change-password", changePassword);
+router.use(verifyUserAcces(["User", "Admin"])); 
+router.patch("/change-password", changePassword);
 router.post("/request-password-reset", requestPasswordReset);
 router.post("/verify-reset-otp", verifyResetOtp);
 router.post("/reset-password",  resetPassword);
