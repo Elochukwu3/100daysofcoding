@@ -20,7 +20,7 @@ const connectDB = async () => {
 connectDB()
 
 mongoose.connection.on("open", () => {
-  console.log("Mongoose connected to DB");
+  console.log("DB Connected....");
 });
 mongoose.connection.on("connected", ()=> {
   logger.info("Connected to MongoDB successfully");
