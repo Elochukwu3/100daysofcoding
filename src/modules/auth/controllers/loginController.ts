@@ -6,7 +6,7 @@ import { User } from "../models/User";
 import { validatePassword } from "../../common/utils/validatePassword";
 import { generateAccessToken } from "../../common/utils/genAccessToken";
 import { generateRefreshToken } from "../../common/utils/genRefreshToken";
-import { setTokens } from "@auth/utils/tokenGenerator";
+import { setTokens } from "../../auth/utils/tokenGenerator";
 
 const loginUser = expressAsyncHandler(
   async (req: Request, res: Response): Promise<void> => {

@@ -4,7 +4,7 @@ import { User, validateOtpInput } from "../models/User";
 import redisClient from "../../common/config/redisClient";
 import { generateAccessToken } from "../../common/utils/genAccessToken";
 import { generateRefreshToken } from "../../common/utils/genRefreshToken";
-import { setTokens } from "@auth/utils/tokenGenerator";
+import { setTokens } from "../../auth/utils/tokenGenerator";
 
 const verifyOtp = async (
   req: Request<{}, {}, { otp: string; email: string }>,
