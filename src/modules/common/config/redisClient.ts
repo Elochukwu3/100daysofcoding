@@ -1,22 +1,42 @@
 import { createClient } from 'redis';
+import { logger } from '../../common/service/logger';
+
 
 const redisClient = createClient();
 
-redisClient.on('error', (err) => {
-  console.log('Redis Error:', err);
-});
 
-redisClient.on('connect', () => {
-  console.log('Connected to Redis...');
-});
+const maxRetries = 5;
+let retryAttempts = 0;
 
-// Immediately connect to Redis and ensure the connection is ready
-(async () => {
+const connectToRedis = async () => {
   try {
     await redisClient.connect();
+    console.log('Connected to Redis...');
   } catch (err) {
-    console.error('Error connecting to Redis:', err);
+    retryAttempts += 1;
+    if (err instanceof Error) {
+      logger.error(`Error connecting to Redis: ${err.message}`);
+      process.exit(1);
+    } else {
+      logger.error(`Unknown error: ${JSON.stringify(err)}`);
+    }
+    
+    if (retryAttempts < maxRetries) {
+      logger.info(`Retrying Redis connection... Attempt ${retryAttempts}`);
+      setTimeout(connectToRedis, 5000); 
+    } else {
+      logger.error('Max retries reached. Could not connect to Redis.');
+    }
   }
-})();
+};
+
+
+redisClient.on('error', (err) => {
+  logger.error(`Redis Error: ${err.message}`);
+  process.exit(1);
+});
+
+
+connectToRedis();
 
 export default redisClient;

@@ -4,10 +4,13 @@ import { hashPassword } from "../../common/utils/hashPassword";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import redisClient from "../../common/config/redisClient"; // Importing the Redis client
 
-const resetPassword = async (req: Request, res: Response): Promise<Response> => {
+const resetPassword = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { newPassword, email } = req.body;
 
-  if(!email || !newPassword){
+  if (!email || !newPassword) {
     return res.status(HttpStatus.BadRequest).json({
       status: "Bad request",
       message: "Email and new password are required",
@@ -15,7 +18,7 @@ const resetPassword = async (req: Request, res: Response): Promise<Response> => 
   }
 
   const userOtpData = await redisClient.get(email);
-  
+
   if (!userOtpData) {
     return res.status(HttpStatus.Unauthorized).json({
       status: "Unauthorized",
@@ -24,7 +27,6 @@ const resetPassword = async (req: Request, res: Response): Promise<Response> => 
   }
 
   const { isVerified } = JSON.parse(userOtpData);
-  
 
   if (!isVerified) {
     return res.status(HttpStatus.Unauthorized).json({
@@ -33,7 +35,6 @@ const resetPassword = async (req: Request, res: Response): Promise<Response> => 
     });
   }
 
- 
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(HttpStatus.NotFound).json({
@@ -42,15 +43,13 @@ const resetPassword = async (req: Request, res: Response): Promise<Response> => 
     });
   }
 
-  
-  const { error } = validatePasswordInput(newPassword);
+  const { error } = validatePasswordInput({ password: newPassword });
   if (error) {
     return res.status(HttpStatus.BadRequest).json({
       status: "Bad request",
       message: error.details[0].message,
     });
   }
-
 
   user.password = await hashPassword(newPassword);
   await user.save();
