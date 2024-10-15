@@ -1,8 +1,13 @@
 import { createClient } from 'redis';
 import { logger } from '../../common/service/logger';
 
-
-const redisClient = createClient();
+const redisClient = createClient(
+  {    password: process.env.REDIS_CLIENT_SECRET_KEY,
+    socket: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT as unknown as number 
+    }}
+);
 
 
 const maxRetries = 5;
