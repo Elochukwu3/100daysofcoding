@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 import Joi from "joi";
 
 interface Product extends Document {
@@ -14,8 +14,8 @@ interface Product extends Document {
   updatedAt: Date;
 }
 
-interface IReview {
-  userId: string;
+export interface IReview extends Document {
+  userId: Types.ObjectId;
   name: string;
   rating: number;
   comment: string;
@@ -36,7 +36,7 @@ const ProductSchema: Schema = new Schema({
   images: [{ type: String, required: true }],
   stock: { type: Number, required: true },
   ratings: { type: Number, default: 0 },
-  reviews: [ReviewSchema],
+  reviews: Types.DocumentArray<IReview>,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
@@ -56,12 +56,11 @@ export const validateProduct = (product: any) => {
 
 
 const ReviewSchemaPut = Joi.object({
-    userId: Joi.string().optional(),
-    name: Joi.string().optional(),
-    rating: Joi.number().integer().min(1).max(5).optional(),
-    comment: Joi.string().required(),
+  userId: Joi.string().required(),
+  name: Joi.string().optional(),
+  rating: Joi.number().min(1).max(5).optional(),
+  comment: Joi.string().required(),
 });
-
 
 const ProductSchemaPut = Joi.object({
     name: Joi.string().optional(),
@@ -70,7 +69,7 @@ const ProductSchemaPut = Joi.object({
     category: Joi.string().optional(),
     images: Joi.array().items(Joi.string()).optional(),
     stock: Joi.number().integer().positive().optional(),
-    ratings: Joi.number().optional(),
+    ratings:  Joi.number().min(1).max(5).optional(),
     reviews: Joi.array().items(ReviewSchemaPut).optional(),
     updatedAt: Joi.date().default(Date.now).optional(),
 });
@@ -78,6 +77,10 @@ const ProductSchemaPut = Joi.object({
 // Type assertion for the product object
 export const validatePutProduct = (product: Record<string, any>) => {
  return ProductSchemaPut.validate(product);
+};
+
+export const validateReview = (review: any) => {
+  return  ReviewSchemaPut.validate(review);
 };
 
 

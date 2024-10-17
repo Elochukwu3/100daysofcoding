@@ -1,12 +1,12 @@
-// src/controllers/ProductController.ts
 import { Request, Response } from 'express';
 import ProductService from '../services/Product.Service';
-import { validateProduct, validatePutProduct } from '../models/Product';
-
+import { validateProduct, validatePutProduct, validateReview } from '../models/Product';
+// import Htt
 class ProductController {
   async createProduct(req: Request, res: Response) {
     try {
       const { error } = validateProduct(req.body);
+      
       if (error) {
         return res.status(400).json({ message: error.details[0].message });
       }
@@ -84,7 +84,26 @@ class ProductController {
       }
     }
 }
+async updateReview(req: Request, res: Response) {
+  const { id, reviewId } = req.params;
+  const { error } = validateReview(req.body);
 
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  try {
+    const updatedProduct = await ProductService.updateReview(id, reviewId, req.body);
+    res.status(200).json({
+      message: 'Review updated successfully',
+      product: updatedProduct,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+}
 async deleteProduct(req: Request, res: Response) {
     try {
       const deletedProduct = await ProductService.deleteProduct(req.params.id);
