@@ -6,6 +6,7 @@ import cors from "cors";
 import corsOptions from "./modules/common/config/corsOptions.config";
 import stateRoute from "./modules/states/routes/states.routes";
 import userRoute from "./modules/user/routes/user.route";
+import productRoute from "./modules/product/routes/product.route";
 import "./modules/common/config/passportConfig";
 import express, { Request, Response } from "express";
 import authRoute from "./modules/auth/routes/auth.routes";
@@ -75,6 +76,7 @@ app.use("/auth/v1/google", googleAuth);
 app.use("/api/v1", stateRoute);
 app.use("/user/v1", userRoute);
 app.use("/cart/v1", cartRoute);
+app.use("/product/v1", productRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
