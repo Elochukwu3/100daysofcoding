@@ -33,7 +33,7 @@ class ProductService {
 
   // Update a product
   async updateProduct(productId: string, updateData: any) {
-    // Check if the updateData contains a new review
+ 
     if (updateData.reviews) {
         const product = await Product.findById(productId);
         if (!product) {
