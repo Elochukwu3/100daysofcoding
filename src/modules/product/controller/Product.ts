@@ -1,21 +1,22 @@
 import { Request, Response } from 'express';
 import ProductService from '../services/Product.Service';
 import { validateProduct, validatePutProduct, validateReview } from '../models/Product';
-// import Htt
+import { HttpStatus } from "../../common/enums/StatusCodes";
+
 class ProductController {
   async createProduct(req: Request, res: Response) {
     try {
       const { error } = validateProduct(req.body);
       
       if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+        return res.status(HttpStatus.BadRequest).json({ message: error.details[0].message });
       }
 
       const product = await ProductService.createProduct(req.body);
-      res.status(201).json(product);
+      res.status(HttpStatus.Created).json(product);
     } catch (error) {
      if(error instanceof Error){
-        res.status(400).json({ message: error.message });
+        res.status(HttpStatus.BadRequest).json({ message: error.message });
      }
     }
   }
@@ -49,10 +50,10 @@ class ProductController {
        
         const products = await ProductService.getAllProducts(filter, options);
 
-        res.status(200).json(products);
+        res.status(HttpStatus.Success).json(products);
     } catch (error) {
         if (error instanceof Error) {
-            res.status(400).json({ message: error.message });
+            res.status(HttpStatus.BadRequest).json({ message: error.message });
         }
     }
 }
@@ -62,10 +63,10 @@ class ProductController {
     const { id } = req.params; 
     try {
       const product = await ProductService.getProductById(id);
-      res.status(200).json(product);
+      res.status(HttpStatus.Success).json(product);
     } catch (error) {
         if(error instanceof Error){
-            res.status(404).json({ message: error.message });
+            res.status(HttpStatus.BadRequest).json({ message: error.message });
          }
     }
   }
@@ -73,11 +74,11 @@ class ProductController {
   async updateProduct(req: Request, res: Response) {
     const { error } = validatePutProduct(req.body);
     if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+      return res.status(HttpStatus.BadRequest).json({ message: error.details[0].message });
     }
     try {
       const updatedProduct = await ProductService.updateProduct(req.params.id, req.body);
-      res.status(200).json(updatedProduct);
+      res.status(HttpStatus.Success).json(updatedProduct);
     } catch (error) {
       if(error instanceof Error){
           res.status(400).json({ message: error.message });

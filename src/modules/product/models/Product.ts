@@ -36,7 +36,7 @@ const ProductSchema: Schema = new Schema({
   images: [{ type: String, required: true }],
   stock: { type: Number, required: true },
   ratings: { type: Number, default: 0 },
-  reviews: Types.DocumentArray<IReview>,
+  reviews: [ReviewSchema],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
