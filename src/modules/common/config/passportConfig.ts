@@ -16,7 +16,8 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/v1/google/callback",
+      callbackURL:
+        "https://one00daysofcoding.onrender.com/auth/v1/google/callback",
     },
     async (accessToken, refreshToken, profile: Profile, done) => {
       try {
