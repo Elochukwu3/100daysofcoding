@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import ProductController from '../controller/Product';
+import ReviewController from '../reviews/reviewController';
+
 
 const router = Router();
 
@@ -16,13 +18,13 @@ router.put('/:id', ProductController.updateProduct);
 router.delete('/:id', ProductController.deleteProduct);
 
 
-// router.post('/:id/reviews', ReviewController.addReview);
+router.post('/:id/reviews', ReviewController.addReview);
 
 
-// router.get(':id/reviews', ReviewController.getAllReviewsForProduct);
+router.get(':id/reviews', ReviewController.getAllReviewsForProduct);
 
 
-// router.put('/products/:productId/reviews/:reviewId', ReviewController.updateReview);
+router.put('/products/:productId/reviews/:reviewId', ReviewController.updateReview);
 
 
 // router.delete('/products/:productId/reviews/:reviewId', ReviewController.deleteReview);
