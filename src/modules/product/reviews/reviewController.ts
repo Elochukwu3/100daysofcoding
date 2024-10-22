@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import ReviewService from './reviewService';
 import ProductService from '../services/Product.Service';
 import { HttpStatus } from '../../common/enums/StatusCodes';
+import { validateReview } from '../models/Product';
 
 class ReviewController {
-  // Add a review
+
   async addReview(req: Request, res: Response) {
     try {
       const product = await ReviewService.addReview(req.params.id, req.body);
@@ -18,8 +19,11 @@ class ReviewController {
 
   // Get all reviews for a product
   async getAllReviewsForProduct(req: Request, res: Response) {
+  
+  
     try {
       const product = await ProductService.getProductById(req.params.id);
+
       res.status(HttpStatus.Success).json(product.reviews);
     } catch (error) {
       if(error instanceof Error) {
@@ -30,6 +34,13 @@ class ReviewController {
 
   // Update a review
   async updateReview(req: Request, res: Response) {
+    const { id, reviewId } = req.params;
+    const { error } = validateReview(req.body);
+  
+    if (error) {
+      return res.status(HttpStatus.BadRequest).json({ message: error.details[0].message });
+    }
+  
     try {
       const product = await ReviewService.updateReview(req.params.productId, req.params.reviewId, req.body);
       res.status(HttpStatus.Success).json(product);
