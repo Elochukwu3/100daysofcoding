@@ -1,7 +1,7 @@
 
 import { Router } from "express";
 import DeliveryAddressController from "./delivery.controller";
-import verifyUserAcces from "@common/middlewares/verifyaccess";
+import verifyUserAcces from "../common/middlewares/verifyaccess";
 
 
 const router = Router();
