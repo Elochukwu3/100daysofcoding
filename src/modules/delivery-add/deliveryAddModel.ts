@@ -63,4 +63,19 @@ export const validateAddress = (data:Record<string, any>)=> {
     return schema.validate(data);
 }
 
+
+export const validateAddUpdate = (data: Record<string, any>) => {
+    const schema = Joi.object({
+        firstName: Joi.string().optional(),
+        lastName: Joi.string().optional(),
+        phoneNumber: Joi.string().optional(),
+        streetAddress: Joi.string().optional(),
+        lga: Joi.string().optional(),
+        city: Joi.string().optional(),
+        state: Joi.string().optional()
+    });
+    return schema.validate(data);
+};
+
+
 export default mongoose.model<IDeliveryAdd>('delivery-address',DeliveryAddSchema)

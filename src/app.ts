@@ -16,6 +16,7 @@ import passport from "passport";
 import googleAuthSessionConfig from "./modules/common/config/googleSessionConfig";
 import otpSessionConfig from "./modules/common/config/otpSessionConfig";
 import cartRoute from "./modules/products/routes/cart.route";
+import deliveryRoute from "./modules/delivery-add/deliveryAdd.route"
 
 import morgan from "morgan";
 import helmet from "helmet";
@@ -78,6 +79,7 @@ app.use("/api/v1", stateRoute);
 app.use("/user/v1", userRoute);
 app.use("/cart/v1", cartRoute);
 app.use("/v1/products", productRoute);
+app.use("/v1/user", deliveryRoute)
 
 app.all("*", (req, res) => {
   res.status(404);

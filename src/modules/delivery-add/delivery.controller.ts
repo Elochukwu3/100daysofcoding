@@ -1,8 +1,9 @@
 // controllers/DeliveryAddressController.ts
 import { Request, Response } from 'express';
 import DeliveryAddressService from './DeliveryAddressService';
-import { validateAddress } from './deliveryAddModel';
+import { validateAddress, validateAddUpdate } from './deliveryAddModel';
 import { Types } from 'mongoose';
+import { HttpStatus } from '../common/enums/StatusCodes';
 
 class DeliveryAddressController {
 
@@ -10,10 +11,10 @@ class DeliveryAddressController {
   async createAddress(req: Request, res: Response) {
     const { error } = validateAddress(req.body);
     if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+      return res.status(HttpStatus.BadRequest).json({status: false, message: error.details[0].message });
     }
     if (!req.user) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        return res.status(HttpStatus.Unauthorized).json({status: false, message: 'Unauthorized' });
       }
       
     try {
@@ -22,11 +23,12 @@ class DeliveryAddressController {
         user: req?.user.id
       });
       res.status(201).json({
+        status: true,
         message: "Delivery address added successfully",
-        address,
+        // address,
       });
     } catch (err) {
-      res.status(500).json({ message: 'Server error' });
+      res.status(HttpStatus.ServerError).json({status: false,  message: 'Server error' });
     }
   }
 
@@ -58,7 +60,7 @@ class DeliveryAddressController {
 
   //
   async updateAddress(req: Request, res: Response) {
-    const { error } = validateAddress(req.body);
+    const { error } = validateAddUpdate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
@@ -66,14 +68,14 @@ class DeliveryAddressController {
     try {
       const updatedAddress = await DeliveryAddressService.updateAddress(new Types.ObjectId(req.params.id), req.body);
       if (!updatedAddress) {
-        return res.status(404).json({ message: 'Address not found' });
+        return res.status(HttpStatus.NotFound).json({ message: 'Address not found' });
       }
-      res.status(200).json({
+      res.status(HttpStatus.Success).json({
         message: 'Address updated successfully',
         updatedAddress,
       });
     } catch (err) {
-      res.status(500).json({ message: 'Server error' });
+      res.status(HttpStatus.ServerError).json({ message: 'Server error' });
     }
   }
 
@@ -82,11 +84,11 @@ class DeliveryAddressController {
     try {
       const deletedAddress = await DeliveryAddressService.deleteAddress(new Types.ObjectId(req.params.id));
       if (!deletedAddress) {
-        return res.status(404).json({ message: 'Address not found' });
+        return res.status(HttpStatus.NotFound).json({ message: 'Address not found' });
       }
-      res.status(200).json({ message: 'Address deleted successfully' });
+      res.status(HttpStatus.Success).json({ message: 'Address deleted successfully' });
     } catch (err) {
-      res.status(500).json({ message: 'Server error' });
+      res.status(HttpStatus.ServerError).json({ message: 'Server error' });
     }
   }
 }
