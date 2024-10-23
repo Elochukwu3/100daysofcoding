@@ -60,6 +60,17 @@ calculateAverageRating(reviews: any[]) {
   return totalRating / reviews.length;
 }
 
+async deleteReview(productId: string, reviewId: string) {
+  const product = await Product.findById(productId);
+  if (!product) throw new Error('Product not found');
+
+  const reviewIndex = product.reviews.findIndex((review) => review._id?.toString() === reviewId);
+  if (reviewIndex === -1) throw new Error('Review not found');
+  product.reviews.splice(reviewIndex, 1);
+  await product.save();
+  return product;
+}
+
 }
 
 export default new ReviewService();
