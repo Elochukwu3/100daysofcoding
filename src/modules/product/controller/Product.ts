@@ -81,7 +81,7 @@ class ProductController {
       res.status(HttpStatus.Success).json(updatedProduct);
     } catch (error) {
       if(error instanceof Error){
-          res.status(400).json({ message: error.message });
+          res.status(HttpStatus.BadRequest).json({ message: error.message });
       }
     }
 }
@@ -90,28 +90,28 @@ async updateReview(req: Request, res: Response) {
   const { error } = validateReview(req.body);
 
   if (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    return res.status(HttpStatus.BadRequest).json({ message: error.details[0].message });
   }
 
   try {
     const updatedProduct = await ProductService.updateReview(id, reviewId, req.body);
-    res.status(200).json({
+    res.status(HttpStatus.Success).json({
       message: 'Review updated successfully',
       product: updatedProduct,
     });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
+      res.status(HttpStatus.BadRequest).json({ message: error.message });
     }
   }
 }
 async deleteProduct(req: Request, res: Response) {
     try {
       const deletedProduct = await ProductService.deleteProduct(req.params.id);
-      res.status(200).json({ message: 'Product deleted successfully', product: deletedProduct });
+      res.status(HttpStatus.Success).json({ message: 'Product deleted successfully', product: deletedProduct });
     } catch (error) {
       if(error instanceof Error){
-          res.status(404).json({ message: error.message });
+          res.status(HttpStatus.BadRequest).json({ message: error.message });
       }
     }
 }

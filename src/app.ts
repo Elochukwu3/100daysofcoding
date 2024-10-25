@@ -21,7 +21,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import "./modules/common/config/db.config";
 import errorHandler from "./modules/common/middlewares/errorHandler";
-import apiKeyMiddleware from "./modules/common/middlewares/apiKey";
+// import apiKeyMiddleware from "./modules/common/middlewares/apiKey";
 import path from "path";
 
 const PORT = process.env.PORT || 3000;
@@ -76,7 +76,7 @@ app.use("/auth/v1", authRoute);
 app.use("/api/v1", stateRoute);
 app.use("/user/v1", userRoute);
 app.use("/cart/v1", cartRoute);
-app.use("/product/v1", productRoute);
+app.use("/v1/products", productRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
