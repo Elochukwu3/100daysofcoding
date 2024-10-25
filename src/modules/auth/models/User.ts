@@ -102,4 +102,6 @@ export const validateOtpInput = (data: { email: string; otp: string }) => {
   return schema.validate(data);
 };
 
+
+
 export const User = mongoose.model<IUser>("User", userSchema);

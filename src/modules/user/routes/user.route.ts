@@ -7,9 +7,10 @@ import { Roles } from "../../common/enums/roles";
 
 const router = Router();
 
-router.use(verifyUserAcces);
-router.get("/profile/", verifyRoles(Roles.Admin), getUserProfile);
-router.get("/profile/:userId", getUserProfile);
+router.use(verifyUserAcces(["User", "Admin"]));
+// verifyRoles(Roles.Admin)
+router.get("/profile", getUserProfile);
+// router.get("/profile/:userId", getUserProfile);
 router.patch("/profile/:userId", updateUserProfile);
 
 // router.get('/api/v1/orders/:userId', verifyUser, getUserOrders);

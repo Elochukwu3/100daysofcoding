@@ -5,7 +5,7 @@ import googleAuthSessionConfig from "../../common/config/googleSessionConfig";
 
 const router = Router();
 
-router.use(googleAuthSessionConfig);
+// router.use(googleAuthSessionConfig);
 
 // Route to initiate Google authentication
 router.get(

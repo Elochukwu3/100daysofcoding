@@ -11,8 +11,6 @@ const verifyRoles = (...allowedRoles: number[]) => {
         statusCode: HttpStatus.Unauthorized,
       });
     const rolesArray = [...allowedRoles];
-    console.log(rolesArray);
-    console.log(roles);
     const result = roles
       .map((role) => rolesArray.includes(role))
       .find((val) => val === true);

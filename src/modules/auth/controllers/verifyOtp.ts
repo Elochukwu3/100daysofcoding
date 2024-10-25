@@ -58,7 +58,8 @@ const verifyOtp = async (
         lastname: user.lastname,
         state: user.state,
         email: user.email,
-        password: user.password
+        password: user.password,
+        address:""
       });
 
       await redisClient.del(email);
