@@ -20,6 +20,8 @@ passport.use(
           : process.env.GOOGLE_CALLBACK_URL_PROD,
     },
     async (accessToken, refreshToken, profile: Profile, done) => {
+      console.log(profile);
+      
       try {
         let useremail =
           profile.emails && profile.emails.length > 0
@@ -40,26 +42,28 @@ passport.use(
             ? profile.photos[0].value
             : null;
 
-          const myRefreshToken = generateRefreshToken(profile.id);
+          let myRefreshToken = generateRefreshToken(profile.id);
+          // const myRefreshToken = generateRefreshToken(userDB._id);
 
           userDB = await User.create({
-            googleId: profile.id,
             firstname,
             lastname,
             email:
               profile.emails && profile.emails.length > 0
                 ? profile.emails[0].value
                 : null,
-            phoneNumber,
-            profilePicture,
+            phoneNumber: "",
+            profilePicture:"",
             refreshToken: myRefreshToken,
             provider: [profile.provider],
+            googleId: profile.id,
           });
           const myAccessToken = generateAccessToken(profile.id, userDB.roles);
           const sessionUser: SessionUser = {
             id: profile.id,
             accessToken: myAccessToken,
           };
+          // done(null, userDB)
           done(null, sessionUser);
         } else {
           const myRefreshToken = generateRefreshToken(profile.id);
@@ -71,6 +75,7 @@ passport.use(
             accessToken: myAccessToken,
           };
           done(null, sessionUser);
+          // done(null, userDB)
         }
       } catch (error) {
         return done(error, false);
@@ -81,6 +86,7 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   const sessionUser = user as SessionUser;
+  // done(null, user.id)
   done(null, { id: sessionUser.id, accessToken: sessionUser.accessToken });
 });
 
