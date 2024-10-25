@@ -2,17 +2,17 @@ import "dotenv/config";
 import "express-async-errors";
 import "tsconfig-paths/register";
 import "express-session";
+import "./modules/common/config/passport2";
+import express, { Request, Response } from "express";
 import cors from "cors";
+import passport from "passport";
 import corsOptions from "./modules/common/config/corsOptions.config";
 import stateRoute from "./modules/states/routes/states.routes";
 import userRoute from "./modules/user/routes/user.route";
 import productRoute from "./modules/product/routes/product.route";
-import "./modules/common/config/passportConfig";
-import express, { Request, Response } from "express";
 import authRoute from "./modules/auth/routes/auth.routes";
 import googleAuth from "./modules/auth/routes/google.routes";
 import cookieParser from "cookie-parser";
-import passport from "passport";
 import googleAuthSessionConfig from "./modules/common/config/googleSessionConfig";
 import otpSessionConfig from "./modules/common/config/otpSessionConfig";
 import cartRoute from "./modules/products/routes/cart.route";
@@ -36,8 +36,8 @@ if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
 
-app.use(googleAuthSessionConfig);
 app.use(otpSessionConfig);
+app.use(googleAuthSessionConfig);
 
 app.use(passport.initialize());
 app.use(passport.session());
