@@ -13,7 +13,7 @@ const userSchema = new Schema<IUser>({
   password: { type: String, required: false },
   isVerified: { type: Boolean, required: true, default: true },
   address: { type: String, required: false },
-  // phoneNumber: { type: String },
+  phoneNumber: { type: String },
   provider: {
     type: [String],
     required: true,
