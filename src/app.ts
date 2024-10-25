@@ -35,8 +35,8 @@ if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
 
-app.use(otpSessionConfig);
 app.use(googleAuthSessionConfig);
+app.use(otpSessionConfig);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -71,8 +71,8 @@ morgan.token("state", (req: Request, res: Response) => {
   return error ? `Error: ${JSON.stringify(error)}` : "No error";
 });
 
-app.use("/auth/v1", authRoute);
 app.use("/auth/v1/google", googleAuth);
+app.use("/auth/v1", authRoute);
 app.use("/api/v1", stateRoute);
 app.use("/user/v1", userRoute);
 app.use("/cart/v1", cartRoute);

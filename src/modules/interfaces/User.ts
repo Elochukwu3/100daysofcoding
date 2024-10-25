@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 
 export interface IUser extends Document {
   _id: string;
+  googleId: string;
   firstname: string;
   lastname: string;
   state?: string;
@@ -12,7 +13,7 @@ export interface IUser extends Document {
   retypePassword?: string; // This field is for validation only, not stored in DB
   isVerified: boolean;
   address?: string;
-  phonenumber?: string;
+  phoneNumber?: string;
   provider?: [string];
   roles: {
     User: number;
@@ -25,6 +26,13 @@ declare module "express-serve-static-core" {
   interface Request {
     user?: {
       id?: string;
+      googleId?: string;
+      firstname?: string;
+      lastname?: string;
+      email?: string;
+      phoneNumber?: string;
+      profilePicture?: string;
+      accessToken?: string;
       roles?: number[];
     };
   }
