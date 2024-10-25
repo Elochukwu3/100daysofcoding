@@ -7,14 +7,14 @@ import verifyUserAcces from "../common/middlewares/verifyaccess";
 const router = Router();
 
 router.use(verifyUserAcces(["User", "Admin"]));
-router.post("/", DeliveryAddressController.createAddress);
+router.post("/address", DeliveryAddressController.createAddress);
 
-router.get("/", DeliveryAddressController.getUserAddresses);
+router.get("/address", DeliveryAddressController.getUserAddresses);
 
-router.get("/:id", DeliveryAddressController.getAddressById);
+router.get("/address/:id", DeliveryAddressController.getAddressById);
 
-router.put("/:id", DeliveryAddressController.updateAddress);
+router.put("/address/:id", DeliveryAddressController.updateAddress);
 
-router.delete("/:id", DeliveryAddressController.deleteAddress);
+router.delete("/address/:id", DeliveryAddressController.deleteAddress);
 
 export default router;

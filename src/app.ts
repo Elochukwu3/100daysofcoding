@@ -79,7 +79,7 @@ app.use("/api/v1", stateRoute);
 app.use("/user/v1", userRoute);
 app.use("/cart/v1", cartRoute);
 app.use("/v1/products", productRoute);
-app.use("/v1/user", deliveryRoute)
+app.use("/v1/delivery", deliveryRoute)
 
 app.all("*", (req, res) => {
   res.status(404);

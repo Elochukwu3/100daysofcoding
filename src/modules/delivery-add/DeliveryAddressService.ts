@@ -17,12 +17,25 @@ class DeliveryAddressService {
   }
 
 
-  async updateAddress(id: Types.ObjectId, data: Partial<IDeliveryAdd>) {
+  async updateAddress(id: Types.ObjectId, data: Partial<IDeliveryAdd>, userId: Types.ObjectId) {
+    const userAddress = await DeliveryAddress.findOne({ _id: id, user: userId });
+  
+    if (!userAddress) {
+
+      throw new Error("Address not found or you do not have permission to update this address.");
+    }
+
     return await DeliveryAddress.findByIdAndUpdate(id, data, { new: true });
   }
 
   
-  async deleteAddress(id: Types.ObjectId) {
+  async deleteAddress(id: Types.ObjectId, userId: Types.ObjectId) {
+    const userAddress = await DeliveryAddress.findOne({ _id: id, user: userId });
+  
+    if (!userAddress) {
+
+      throw new Error("Address not found or you do not have permission to update this address.");
+    }
     return await DeliveryAddress.findByIdAndDelete(id);
   }
 }
