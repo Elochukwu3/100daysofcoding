@@ -14,12 +14,13 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL_DEV,
+      callbackURL:
+        process.env.NODE_ENV !== "production"
+          ? process.env.GOOGLE_CALLBACK_URL_DEV
+          : process.env.GOOGLE_CALLBACK_URL_PROD,
     },
     async (accessToken, refreshToken, profile: Profile, done) => {
       try {
-        // const oauth2Client = new google.auth.OAuth2();
-        // oauth2Client.setCredentials({ access_token: accessToken });
         let useremail =
           profile.emails && profile.emails.length > 0
             ? profile.emails[0].value
@@ -34,15 +35,6 @@ passport.use(
         if (userEmail && userEmail.googleId !== profile.id)
           return done(new Error("Email already used by another user"));
         if (!userDB) {
-          // const response = await google
-          //   .people({ version: "v1", auth: oauth2Client })
-          //   .people.get({
-          //     resourceName: "people/me",
-          //     personFields: "phoneNumbers",
-          //   });
-
-          // const phoneNumbers = response.data.phoneNumbers;
-          // const phoneNumber = profile.phoneNumbers && profile.phoneNumbers.length > 0 ? profile.phoneNumbers[0].value : null;
           const phoneNumber = await getPhoneNumber(accessToken);
           const profilePicture = profile.photos
             ? profile.photos[0].value
@@ -63,7 +55,6 @@ passport.use(
             refreshToken: myRefreshToken,
             provider: [profile.provider],
           });
-          // const roles = Object.values(userDB.roles) as number[];
           const myAccessToken = generateAccessToken(profile.id, userDB.roles);
           const sessionUser: SessionUser = {
             id: profile.id,
@@ -71,7 +62,6 @@ passport.use(
           };
           done(null, sessionUser);
         } else {
-          // const roles = Object.values(userDB.roles) as number[];
           const myRefreshToken = generateRefreshToken(profile.id);
           const myAccessToken = generateAccessToken(profile.id, userDB.roles);
           userDB.refreshToken = myRefreshToken;
