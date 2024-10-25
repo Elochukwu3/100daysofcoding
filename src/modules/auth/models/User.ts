@@ -3,15 +3,17 @@ import { IUser } from "../../interfaces/User";
 import Joi from "joi";
 
 const userSchema = new Schema<IUser>({
+  // googleId: { type: String },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   // state: { type: String, required: true },
-  state: { type: String},
+  state: { type: String },
   profilePicture: { type: String, required: false },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: false },
   isVerified: { type: Boolean, required: true, default: true },
   address: { type: String, required: false },
+  // phoneNumber: { type: String },
   provider: {
     type: [String],
     required: true,
@@ -101,5 +103,3 @@ export const validateOtpInput = (data: { email: string; otp: string }) => {
 };
 
 export const User = mongoose.model<IUser>("User", userSchema);
-
-

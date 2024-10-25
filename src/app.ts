@@ -36,8 +36,8 @@ if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
 
-app.use(otpSessionConfig);
 app.use(googleAuthSessionConfig);
+app.use(otpSessionConfig);
 
 app.use(passport.initialize());
 app.use(passport.session());

@@ -1,6 +1,6 @@
 import passport, { Profile } from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { google } from "googleapis";
+import getPhoneNumber from "../../auth/utils/getGooglePhone";
 import { User } from "../../auth/models/User";
 import { SessionUser } from "../../interfaces/User";
 import { generateRefreshToken } from "../../common/utils/genRefreshToken";
@@ -9,52 +9,45 @@ import { generateAccessToken } from "../utils/genAccessToken";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET as string;
 
-const people = google.people("v1");
-
 passport.use(
   new GoogleStrategy(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      // callbackURL: "http://localhost:3000/auth/v1/google/callback",
-      callbackURL: "/auth/google/callback",
+      callbackURL:
+        process.env.NODE_ENV !== "production"
+          ? process.env.GOOGLE_CALLBACK_URL_DEV
+          : process.env.GOOGLE_CALLBACK_URL_PROD,
     },
     async (accessToken, refreshToken, profile: Profile, done) => {
       console.log(profile);
       
       try {
-        const oauth2Client = new google.auth.OAuth2();
-        oauth2Client.setCredentials({ access_token: accessToken });
         let useremail =
           profile.emails && profile.emails.length > 0
             ? profile.emails[0].value
             : null;
+
+        const firstname = profile.name?.familyName || "Unknown";
+        const lastname = profile.name?.givenName || "";
+
         // Find or create user in the database
-        // let userDB = await User.findOne({ _id: profile.id });
         let userDB = await User.findOne({ googleId: profile.id });
         let userEmail = await User.findOne({ email: useremail });
-        // if (userEmail)
-        //   return done(new Error("Email already used by another user"));
+        if (userEmail && userEmail.googleId !== profile.id)
+          return done(new Error("Email already used by another user"));
         if (!userDB) {
-          // const response = await google
-          //   .people({ version: "v1", auth: oauth2Client })
-          //   .people.get({
-          //     resourceName: "people/me",
-          //     personFields: "phoneNumbers",
-          //   });
-
-          // const phoneNumbers = response.data.phoneNumbers;
-          // const phoneNumber = phoneNumbers ? phoneNumbers[0]?.value : null;
-          // const profilePicture = profile.photos
-          //   ? profile.photos[0].value
-          //   : null;
+          const phoneNumber = await getPhoneNumber(accessToken);
+          const profilePicture = profile.photos
+            ? profile.photos[0].value
+            : null;
 
           let myRefreshToken = generateRefreshToken(profile.id);
           // const myRefreshToken = generateRefreshToken(userDB._id);
 
           userDB = await User.create({
-            firstname: profile.name?.familyName,
-            lastname: profile.name?.givenName,
+            firstname,
+            lastname,
             email:
               profile.emails && profile.emails.length > 0
                 ? profile.emails[0].value
@@ -65,8 +58,6 @@ passport.use(
             provider: [profile.provider],
             googleId: profile.id,
           });
-        //  myRefreshToken=  generateRefreshToken(userDB._id)
-          // const roles = Object.values(userDB.roles) as number[];
           const myAccessToken = generateAccessToken(profile.id, userDB.roles);
           const sessionUser: SessionUser = {
             id: profile.id,
@@ -75,7 +66,6 @@ passport.use(
           // done(null, userDB)
           done(null, sessionUser);
         } else {
-          const roles = Object.values(userDB.roles) as number[];
           const myRefreshToken = generateRefreshToken(profile.id);
           const myAccessToken = generateAccessToken(profile.id, userDB.roles);
           userDB.refreshToken = myRefreshToken;
@@ -100,13 +90,13 @@ passport.serializeUser((user, done) => {
   done(null, { id: sessionUser.id, accessToken: sessionUser.accessToken });
 });
 
-passport.deserializeUser(async (sessionData: SessionUser, done) => {
-  //sessiondata==id
+passport.deserializeUser(async (sessionUser: SessionUser, done) => {
+  // Fetch full user from database based on sessionUser.id
   try {
-    const user = await User.findOne({ _id: sessionData.id });
+    const user = await User.findOne({ googleId: sessionUser.id }).lean();
     if (user) {
-      // user.accessToken = sessionData.accessToken;
-      done(null, user);
+      const userObj = { ...user, accessToken: sessionUser.accessToken };
+      done(null, userObj); // Now req.user will be populated with the full user object
     } else {
       done(new Error("User not found"), false);
     }
