@@ -13,7 +13,8 @@ export interface IUser extends Document {
   isVerified: boolean;
   address?: string;
   phonenumber?: string;
-  provider?: [string];
+  provider: [string];
+  googleId?: string;
   roles: {
     User: number;
     Admin?: number;

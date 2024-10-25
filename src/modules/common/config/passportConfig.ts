@@ -16,9 +16,12 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/v1/google/callback",
+      // callbackURL: "http://localhost:3000/auth/v1/google/callback",
+      callbackURL: "/auth/google/callback",
     },
     async (accessToken, refreshToken, profile: Profile, done) => {
+      console.log(profile);
+      
       try {
         const oauth2Client = new google.auth.OAuth2();
         oauth2Client.setCredentials({ access_token: accessToken });
@@ -27,25 +30,27 @@ passport.use(
             ? profile.emails[0].value
             : null;
         // Find or create user in the database
-        let userDB = await User.findOne({ _id: profile.id });
+        // let userDB = await User.findOne({ _id: profile.id });
+        let userDB = await User.findOne({ googleId: profile.id });
         let userEmail = await User.findOne({ email: useremail });
-        if (!userEmail)
-          return done(new Error("Email already used by another user"));
+        // if (userEmail)
+        //   return done(new Error("Email already used by another user"));
         if (!userDB) {
-          const response = await google
-            .people({ version: "v1", auth: oauth2Client })
-            .people.get({
-              resourceName: "people/me",
-              personFields: "phoneNumbers",
-            });
+          // const response = await google
+          //   .people({ version: "v1", auth: oauth2Client })
+          //   .people.get({
+          //     resourceName: "people/me",
+          //     personFields: "phoneNumbers",
+          //   });
 
-          const phoneNumbers = response.data.phoneNumbers;
-          const phoneNumber = phoneNumbers ? phoneNumbers[0]?.value : null;
-          const profilePicture = profile.photos
-            ? profile.photos[0].value
-            : null;
+          // const phoneNumbers = response.data.phoneNumbers;
+          // const phoneNumber = phoneNumbers ? phoneNumbers[0]?.value : null;
+          // const profilePicture = profile.photos
+          //   ? profile.photos[0].value
+          //   : null;
 
-          const myRefreshToken = generateRefreshToken(profile.id);
+          let myRefreshToken = generateRefreshToken(profile.id);
+          // const myRefreshToken = generateRefreshToken(userDB._id);
 
           userDB = await User.create({
             firstname: profile.name?.familyName,
@@ -54,17 +59,20 @@ passport.use(
               profile.emails && profile.emails.length > 0
                 ? profile.emails[0].value
                 : null,
-            phoneNumber,
-            profilePicture,
+            phoneNumber: "",
+            profilePicture:"",
             refreshToken: myRefreshToken,
             provider: [profile.provider],
+            googleId: profile.id,
           });
+        //  myRefreshToken=  generateRefreshToken(userDB._id)
           // const roles = Object.values(userDB.roles) as number[];
           const myAccessToken = generateAccessToken(profile.id, userDB.roles);
           const sessionUser: SessionUser = {
             id: profile.id,
             accessToken: myAccessToken,
           };
+          // done(null, userDB)
           done(null, sessionUser);
         } else {
           const roles = Object.values(userDB.roles) as number[];
@@ -77,6 +85,7 @@ passport.use(
             accessToken: myAccessToken,
           };
           done(null, sessionUser);
+          // done(null, userDB)
         }
       } catch (error) {
         return done(error, false);
@@ -87,10 +96,12 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   const sessionUser = user as SessionUser;
+  // done(null, user.id)
   done(null, { id: sessionUser.id, accessToken: sessionUser.accessToken });
 });
 
 passport.deserializeUser(async (sessionData: SessionUser, done) => {
+  //sessiondata==id
   try {
     const user = await User.findOne({ _id: sessionData.id });
     if (user) {

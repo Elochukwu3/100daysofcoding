@@ -72,9 +72,9 @@ morgan.token("state", (req: Request, res: Response) => {
   return error ? `Error: ${JSON.stringify(error)}` : "No error";
 });
 
-app.use("/auth/v1/google", googleAuth);
+app.use("/auth/google", googleAuth);
 app.use("/auth/v1", authRoute);
-// app.use("/google-auth/google", googleAuth);
+
 app.use("/api/v1", stateRoute);
 app.use("/user/v1", userRoute);
 app.use("/cart/v1", cartRoute);
