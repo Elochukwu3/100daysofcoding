@@ -4,7 +4,7 @@ import DeliveryAddressService from './DeliveryAddressService';
 import { validateAddress, validateAddUpdate } from './deliveryAddModel';
 import { Types } from 'mongoose';
 import { HttpStatus } from '../common/enums/StatusCodes';
-import sendErrorResponse from '@common/utils/sendErrorRes';
+import sendErrorResponse from '../common/utils/sendErrorRes';
 
 class DeliveryAddressController {
 
