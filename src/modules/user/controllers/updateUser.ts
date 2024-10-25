@@ -7,13 +7,11 @@ export const updateUserProfile = async (req: Request, res: Response) => {
   const { error } = validateUpdateProfileInput(req.body);
 
   if (error) {
-    return res
-      .status(HttpStatus.BadRequest)
-      .json({
-        status: "failed",
-        message: error.details[0].message,
-        statusCode: HttpStatus.BadRequest,
-      });
+    return res.status(HttpStatus.BadRequest).json({
+      status: "failed",
+      message: error.details[0].message,
+      statusCode: HttpStatus.BadRequest,
+    });
   }
 
   const { userId } = req.params;
@@ -31,7 +29,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
 
     if (firstname) user.firstname = firstname;
     if (lastname) user.lastname = lastname;
-    if (phoneNumber) user.phonenumber = phoneNumber;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
     if (email) user.email = email;
     if (address) user.address = address;
 

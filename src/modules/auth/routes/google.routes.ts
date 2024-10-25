@@ -14,7 +14,7 @@ router.get(
     scope: [
       "profile",
       "email",
-      "https://www.googleapis.com/auth/contacts.readonly",
+      "https://www.googleapis.com/auth/user.phonenumbers.read",
     ],
   })
 );
@@ -39,11 +39,27 @@ router.get("/failure", (req: Request, res: Response) => {
 });
 
 router.get("/success", (req: Request, res: Response) => {
-  const { accessToken } = req.user as any;
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  const {
+    firstname,
+    lastname,
+    email,
+    phoneNumber,
+    profilePicture,
+    accessToken,
+  } = req.user;
   return res.status(HttpStatus.Success).json({
     status: "Success",
     message: "Login Successful",
-    user: req.user,
+    user: {
+      firstname,
+      lastname,
+      email,
+      phoneNumber,
+      profilePicture,
+    },
     accessToken,
     statuscode: HttpStatus.Success,
   });
