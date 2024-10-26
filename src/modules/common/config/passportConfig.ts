@@ -36,9 +36,7 @@ passport.use(
           return done(new Error("Email already used by another user"));
         if (!userDB) {
           const phoneNumber = await getPhoneNumber(accessToken);
-          const profilePicture = profile.photos
-            ? profile.photos[0].value
-            : null;
+          const profilePicture = profile.photos ? profile.photos[0].value : "";
 
           const myRefreshToken = generateRefreshToken(profile.id);
 
