@@ -15,10 +15,10 @@ async function getPhoneNumber(accessToken: string) {
     if (phoneNumbers && phoneNumbers.length > 0) {
       return phoneNumbers[0].value; // Return the first phone number
     }
-    return null; // No phone number found
+    return ""; // No phone number found
   } catch (error) {
     console.error("Error fetching phone number from Google People API:", error);
-    return null;
+    return "";
   }
 }
 
