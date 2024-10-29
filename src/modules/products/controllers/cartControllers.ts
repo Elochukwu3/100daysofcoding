@@ -3,8 +3,9 @@ import Cart from "../models/Cart";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import {
   CartItem as CartItemType,
-  Cart as CartType,
-} from "../../interfaces/Cart";
+  validatePostProduct,
+  validatePutProduct,
+} from "../models/Cart";
 import expressAsyncHandler from "express-async-handler";
 
 // Function to get products in a user's cart
@@ -45,6 +46,13 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
     });
   }
   const userId = req.user?.id;
+  const { error } = validatePostProduct(req.body);
+  if (error) {
+    res
+      .status(HttpStatus.BadRequest)
+      .json({ message: error.details[0].message });
+    return;
+  }
   const { productId, quantity, size, price, image } = req.body;
 
   try {
@@ -69,7 +77,13 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
         cart.items[existingIndex].quantity += quantity;
       } else {
         // Otherwise, add the new product to the cart
-        cart.items.push({ productId, quantity, size, price, image });
+        cart.items.push({
+          productId,
+          quantity,
+          size,
+          price,
+          image,
+        } as CartItemType);
       }
 
       // Recalculate total amount
@@ -98,6 +112,13 @@ const updateProduct = async (req: Request, res: Response): Promise<void> => {
     });
   }
   const userId = req.user?.id;
+  const { error } = validatePutProduct(req.body);
+  if (error) {
+    res
+      .status(HttpStatus.BadRequest)
+      .json({ message: error.details[0].message });
+    return;
+  }
   const { productId, quantity } = req.body;
 
   try {
@@ -148,7 +169,7 @@ const deleteProduct = async (req: Request, res: Response): Promise<void> => {
   const { productId } = req.body;
 
   try {
-    const cart: CartType | null = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId });
     if (!cart) {
       res.status(404).json({ message: "Cart not found" });
       return;
