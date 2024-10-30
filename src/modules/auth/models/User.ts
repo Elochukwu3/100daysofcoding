@@ -7,6 +7,7 @@ const userSchema = new Schema<IUser>({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   // state: { type: String, required: true },
+  gender: { type: String, enum: ["male", "female"], required: false },
   state: { type: String },
   profilePicture: { type: String, required: false },
   email: { type: String, required: true, unique: true },
