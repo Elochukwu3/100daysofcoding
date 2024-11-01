@@ -22,7 +22,6 @@ const cartSchema = new mongoose.Schema({
       size: {
         type: String,
         enum: ["xs", "sm", "md", "lg", "xl", "xxl"],
-        required: true,
       },
       price: {
         type: Number,
@@ -55,7 +54,6 @@ const validateUpdateProduct = joi.object({
   productId: joi.string().length(24).hex().required(),
   quantity: joi.number().integer().positive().optional(),
   size: joi.string().valid("xs", "sm", "md", "lg", "xl", "xxl").optional(),
-  price: joi.number().positive().required(),
 });
 
 export const validatePutProduct = (product: Record<string, any>) => {

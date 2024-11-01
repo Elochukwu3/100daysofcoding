@@ -27,6 +27,10 @@ const getProducts = expressAsyncHandler(
         res.status(404).json({ message: "Cart not found" });
         return;
       }
+      if (cart.items.length === 0) {
+        res.status(200).json({ message: "Your cart is empty", items: [] });
+        return;
+      }
       res.status(200).json(cart);
     } catch (error) {
       const err = error as Error;
@@ -167,6 +171,10 @@ const deleteProduct = async (req: Request, res: Response): Promise<void> => {
   }
   const userId = req.user?.id;
   const { productId } = req.body;
+  if (!productId) {
+    res.status(HttpStatus.BadRequest).json({ message: "Provide product id" });
+    return;
+  }
 
   try {
     const cart = await Cart.findOne({ userId });
