@@ -9,6 +9,7 @@ import passport from "passport";
 import corsOptions from "./modules/common/config/corsOptions.config";
 import stateRoute from "./modules/states/routes/states.routes";
 import userRoute from "./modules/user/routes/user.route";
+import orderRoute from "./modules/orders/routes/order.route";
 import productRoute from "./modules/product/routes/product.route";
 import authRoute from "./modules/auth/routes/auth.routes";
 import googleAuth from "./modules/auth/routes/google.routes";
@@ -80,7 +81,7 @@ app.use("/user/v1", userRoute);
 app.use("/cart/v1", cartRoute);
 app.use("/v1/products", productRoute);
 app.use("/v1/delivery", deliveryRoute)
-
+app.use('/api/v1/orders', orderRoute);
 app.all("*", (req, res) => {
   res.status(404);
   if (req.accepts("html")) {
