@@ -1,6 +1,6 @@
+import { HttpStatus } from './../../common/enums/StatusCodes';
 import { Request, Response } from "express";
 import { User } from "../../auth/models/User";
-import { HttpStatus } from "../../common/enums/StatusCodes";
 import { validateUpdateProfileInput } from "../../user/model/Updateuser";
 
 export const updateUserProfile = async (req: Request, res: Response) => {
@@ -16,11 +16,11 @@ export const updateUserProfile = async (req: Request, res: Response) => {
 }
 
   const { userId } = req.params;
-  const { firstname, lastname, phoneNumber, email, address } = req.body;
+  const { firstname, lastname, phoneNumber, email, address, gender } = req.body;
   if (req.user.id !== userId) {
     return res.status(403).json({ message: "Access denied" });
   }
-  const { error } = validateUpdateProfileInput(req.body);
+  const { error } = validateUpdateProfileInput({firstname, lastname, phoneNumber, email, address});
 
   if (error) {
     return res.status(HttpStatus.BadRequest).json({
@@ -29,6 +29,17 @@ export const updateUserProfile = async (req: Request, res: Response) => {
       statusCode: HttpStatus.BadRequest,
     });
   }
+  if (gender &&  gender.toLowerCase() !== "male" &&  gender.toLowerCase() !== "female" ) {
+    return res.status(HttpStatus.BadRequest).json({
+      status : "Validation failed",
+      "message": {
+        "field": "gender",
+        "details": `${gender} is not a valid option. Please enter either 'male' or 'female' as the gender`
+      }
+    }
+    )
+  }
+  
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -44,6 +55,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (email) user.email = email;
     if (address) user.address = address;
+    if (gender) user.gender = gender.toLowerCase();
 
     await user.save();
     // const { __v, _id, password, ...remData } = user.toObject();
