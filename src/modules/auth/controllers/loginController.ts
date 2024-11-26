@@ -29,6 +29,15 @@ const loginUser = expressAsyncHandler(
       });
       return;
     }
+    if (!user.password) {
+      res.status(HttpStatus.BadRequest).json({
+        status: "Bad Request",
+        message: "This account is registered using Google. Please log in with Google.",
+        statusCode: HttpStatus.BadRequest,
+      });
+      return;
+    }
+    
     const checkPassword = await validatePassword(
       password,
       user.password as string
