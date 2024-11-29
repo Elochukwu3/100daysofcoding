@@ -5,6 +5,7 @@ import verifyUserAcces from "../../common/middlewares/verifyaccess";
 const router = express.Router();
 
 router.use(verifyUserAcces(["User", "Admin"]));
+// router.use(verifyUserAcces(["User", "Admin"]));
 router.get('/history',  getOrderHistory);
 
 
