@@ -1,4 +1,6 @@
 import { Router } from "express";
+import verifyUserAcces from "../../common/middlewares/verifyaccess";
+
 const router = Router();
 import {
   getProducts,
@@ -7,6 +9,8 @@ import {
   deleteProduct,
 } from "../controllers/cartControllers";
 
+
+router.use(verifyUserAcces(["User", "Admin"]));
 router
   .route("/")
   .get(getProducts)
