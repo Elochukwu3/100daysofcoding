@@ -1,3 +1,6 @@
+import mongoose from "mongoose"; 
+import { LocalCartItem } from './../interfaces/cart';
+import { ICartItem } from './../interfaces/CartItem';
 import { Request, Response } from "express";
 import Cart, { validateCart } from "../models/Cart";
 import { HttpStatus } from "../../common/enums/StatusCodes";
@@ -184,6 +187,62 @@ const deleteProduct = async (req: Request, res: Response): Promise<void> => {
     const err = error as Error;
     res.status(500).json({ message: "Error deleting cart" });
     console.error(`Error: ${err.name} - ${err.message}`);
+  }
+};
+
+
+
+
+export const syncCart = async (req: Request, res: Response) => {
+  const { userId, cart: localCart }: { userId: string; cart: LocalCartItem[] } = req.body;
+
+  try {
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      // Create a new cart if none exists
+      cart = await Cart.create({
+        userId,
+        items: localCart.map((item) => ({
+          ...item,
+          productId: new mongoose.Types.ObjectId(item.productId),
+        })),
+        totalAmount: localCart.reduce(
+          (sum: number, item: LocalCartItem) => sum + item.price * item.quantity,
+          0
+        ),
+      });
+    } else {
+      // Merge local cart with existing cart
+      localCart.forEach((localItem) => {
+        const existingItemIndex = cart!.items.findIndex(
+          (item) =>
+            item.productId.equals(localItem.productId) && item.size === localItem.size
+        );
+
+        if (existingItemIndex !== -1) {
+          cart!.items[existingItemIndex].quantity += localItem.quantity;
+        } else {
+          cart!.items.push({
+            ...localItem,
+            productId: new mongoose.Types.ObjectId(localItem.productId),
+          } as ICartItem);          
+        }
+      });
+
+      // Recalculate total amount
+      cart.totalAmount = cart.items.reduce(
+        (sum: number, item: ICartItem) => sum + item.price * item.quantity,
+        0
+      );
+
+      await cart.save();
+    }
+
+    return res.status(200).json(cart);
+  } catch (error) {
+    console.error("Error syncing cart:", error);
+    return res.status(500).json({ error: "Error syncing cart" });
   }
 };
 

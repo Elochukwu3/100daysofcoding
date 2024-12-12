@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Joi from "joi";
+import { ICart } from "../interfaces/cart";
 
 const cartSchema = new mongoose.Schema({
   userId: {
@@ -53,7 +54,7 @@ const cartValidateShema = Joi.object({
         image: Joi.string().uri().required(),
 });
 
-const Cart = mongoose.model("Cart", cartSchema);
+const Cart = mongoose.model<ICart>("Cart", cartSchema);
 export const validateCart = (data: Record<string, any>) => {
   return cartValidateShema.validate(data);
 };
