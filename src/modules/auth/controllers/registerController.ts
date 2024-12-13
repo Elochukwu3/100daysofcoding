@@ -61,6 +61,7 @@ const registerUser = asyncHandler(
       status: "success",
       message: result,
       otp: OTP,
+      email
     });
   }
 );
