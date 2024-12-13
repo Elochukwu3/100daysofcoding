@@ -81,12 +81,22 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
       );
 
       if (existingIndex !== -1) {
-        // If product already exists in the cart, update the quantity
+        // If the product already exists in the cart, update the quantity
         cart.items[existingIndex].quantity += quantity;
       } else {
-        // Otherwise, add the new product to the cart
-        cart.items.push({ productId, quantity, size, price, image });
+        // Ensure productId is a valid ObjectId
+        const newCartItem: ICartItem = {
+          productId: new mongoose.Types.ObjectId(productId), // Convert to ObjectId
+          quantity,
+          size,
+          price,
+          image,
+          _id: new mongoose.Types.ObjectId(), // Generate a new ObjectId for the cart item
+        } as ICartItem;
+      
+        cart.items.push(newCartItem);
       }
+      
 
       // Recalculate total amount
       cart.totalAmount = cart.items.reduce(
