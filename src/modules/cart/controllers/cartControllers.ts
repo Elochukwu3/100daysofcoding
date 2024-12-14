@@ -126,13 +126,24 @@ const updateProductQuantity = async (req: Request, res: Response): Promise<void>
     });
     return;
   }
-
+  if (!req.body || typeof req.body !== 'object') {
+     res.status(400).json({
+      message: 'Invalid request body. A valid JSON object is required.',
+    });
+    return
+  }
+  
   const userId = req.user.id;
   const { productId, quantity } = req.body;
-
+  if (!quantity || !productId) {
+  res.status(400).json({
+      message: 'Both "quantity" and "productId" are required and cannot be empty.',
+    });
+    return 
+  }
   try {
     // Fetch the cart
-    const cart = await Cart.findOne({ userId }).lean();
+    const cart = await Cart.findOne({ userId });
     if (!cart) {
       res.status(404).json({ message: "Cart not found" });
       return;
@@ -167,7 +178,7 @@ const updateProductQuantity = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-const currentQuantity = cart.items[itemIndex].quantity;
+let currentQuantity = cart.items[itemIndex].quantity;
 
 if (currentQuantity + quantity > productUnit) {
   res.status(400).json({
@@ -175,16 +186,14 @@ if (currentQuantity + quantity > productUnit) {
   });
   return;
 }
+if (quantity < 0 && currentQuantity + quantity < 1) {
+  res.status(400).json({
+    message: `Cannot decrease quantity below 1. Current quantity is ${currentQuantity}.`,
+  });
+  return;
+}
 
-    if (quantity < 1) {
-      res.status(400).json({
-        message: "Cannot decrease quantity below 1. Use the remove button instead.",
-      });
-      return;
-    }
-
-    // Update the cart item quantity
-    cart.items[itemIndex].quantity = quantity;
+    cart.items[itemIndex].quantity = currentQuantity + quantity;
 
     // Recalculate total amount (assuming `price` is stored in cart.items)
     cart.totalAmount = cart.items.reduce(
@@ -193,15 +202,14 @@ if (currentQuantity + quantity > productUnit) {
     );
 
     // Update the cart in the database
-    await Cart.updateOne({ userId }, cart);
-
+    await cart.save();
     res.status(200).json(cart);
+    return
   } catch (error) {
     console.error(`Error updating cart: ${error}`);
     res.status(500).json({ message: "Error updating cart" });
   }
 };
-
 
 
 
@@ -215,19 +223,38 @@ const deleteProduct = async (req: Request, res: Response): Promise<void> => {
       message: "Unauthorized access. No valid user found",
       statusCode: HttpStatus.Unauthorized,
     });
+    return;
   }
-  const userId = req.user?.id;
+
+  const userId = req.user.id;
   const { productId } = req.body;
+
+  // Validate the request body
+  if (!productId) {
+    res.status(HttpStatus.BadRequest).json({
+      message: 'Invalid request. "productId" is required.',
+      statusCode: HttpStatus.BadRequest,
+    });
+    return;
+  }
 
   try {
     const cart: CartType | null = await Cart.findOne({ userId });
     if (!cart) {
-      res.status(404).json({ message: "Cart not found" });
+      res.status(HttpStatus.NotFound).json({ message: "Cart not found" });
       return;
     }
 
-    // Filter out the product to remove it from the cart
-    cart.items = cart.items.filter((item) => !item.productId.equals(productId));
+    // Find the product in the cart to delete
+    const itemIndex = cart.items.findIndex(item => item.productId.equals(productId));
+
+    if (itemIndex === -1) {
+      res.status(HttpStatus.NotFound).json({ message: "Product not found in the cart" });
+      return;
+    }
+
+    // Remove the product from the cart
+    cart.items.splice(itemIndex, 1);
 
     // Recalculate total amount
     cart.totalAmount = cart.items.reduce(
@@ -235,14 +262,16 @@ const deleteProduct = async (req: Request, res: Response): Promise<void> => {
       0
     );
 
+    // Save the updated caret to the database
     await cart.save();
-    res.status(200).json(cart);
+
+    res.status(HttpStatus.Success).json(cart);
   } catch (error) {
     const err = error as Error;
-    res.status(500).json({ message: "Error deleting cart" });
-    console.error(`Error: ${err.name} - ${err.message}`);
+    res.status(HttpStatus.ServerError).json({ message: "Error deleting product from cart" });
   }
 };
+
 
 
 
