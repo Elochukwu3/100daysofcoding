@@ -7,7 +7,7 @@ interface Product extends Document {
   price: number;
   category: string;
   images: string[];
-  stock: number;
+  unit: number;
   ratings: number;
   reviews: IReview[];
   createdAt: Date;
@@ -34,7 +34,7 @@ const ProductSchema: Schema = new Schema({
   price: { type: Number, required: true },
   category: { type: String, required: true },
   images: [{ type: String, required: true }],
-  stock: { type: Number, required: true },
+  unit: { type: Number, required: true },
   ratings: { type: Number, default: 0 },
   reviews: [ReviewSchema],
   createdAt: { type: Date, default: Date.now },
@@ -48,7 +48,7 @@ export const validateProduct = (product: any) => {
     price: Joi.number().positive().precision(2).required(),
     category: Joi.string().required(),
     images: Joi.array().items(Joi.string().uri()).required(),
-    stock: Joi.number().integer().min(0).required(),
+    unit: Joi.number().integer().min(0).required(),
     ratings: Joi.number().integer().min(0).max(5).optional(),
   });
   return schema.validate(product);
