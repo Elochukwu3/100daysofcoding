@@ -1,5 +1,5 @@
 import mongoose from "mongoose"; 
-import { LocalCartItem } from './../interfaces/cart';
+import { ICart, LocalCartItem } from './../interfaces/cart';
 import { ICartItem } from './../interfaces/CartItem';
 import { Request, Response } from "express";
 import Cart, { validateCart } from "../models/Cart";
@@ -9,6 +9,7 @@ import {
   Cart as CartType,
 } from "../../interfaces/Cart";
 import expressAsyncHandler from "express-async-handler";
+import Product  from "modules/product/models/Product";
 
 // Function to get products in a user's cart
 const getProducts = expressAsyncHandler(
@@ -116,52 +117,95 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Function to update a product in the cart
-const updateProduct = async (req: Request, res: Response): Promise<void> => {
+
+const updateProductQuantity = async (req: Request, res: Response): Promise<void> => {
   if (!req.user || !req.user.id) {
-    res.status(HttpStatus.Unauthorized).json({
+    res.status(401).json({
       status: "failed",
       message: "Unauthorized access. No valid user found",
-      statusCode: HttpStatus.Unauthorized,
     });
+    return;
   }
-  const userId = req.user?.id;
+
+  const userId = req.user.id;
   const { productId, quantity } = req.body;
 
   try {
-    const cart = await Cart.findOne({ userId }).populate(
-      "items.productId",
-      "name"
-    );
-
+    // Fetch the cart
+    const cart = await Cart.findOne({ userId }).lean();
     if (!cart) {
       res.status(404).json({ message: "Cart not found" });
       return;
     }
 
-    const itemIndex = cart.items.findIndex((item) =>
-      item.productId?.equals(productId)
+
+    const productIds = cart.items.map((item) => item.productId);
+
+    const products = await Product.find({ _id: { $in: productIds } })
+      .select("_id unit") 
+      .lean();
+
+    
+    const productMap = products.reduce((map, product) => {
+      map[product._id.toString()] = product.unit;
+      return map;
+    }, {} as Record<string, number>);
+
+    const itemIndex = cart.items.findIndex(
+      (item) => item.productId.toString() === productId
     );
+
     if (itemIndex === -1) {
       res.status(404).json({ message: "Product not found in the cart" });
       return;
     }
 
+    // Get the unit of the product
+    const productUnit = productMap[productId];
+    if (!productUnit) {
+      res.status(404).json({ message: "Product not found in the database" });
+      return;
+    }
+
+const currentQuantity = cart.items[itemIndex].quantity;
+
+if (currentQuantity + quantity > productUnit) {
+  res.status(400).json({
+    message: `Cannot increase quantity. Maximum available stock is ${productUnit}`,
+  });
+  return;
+}
+
+    if (quantity < 1) {
+      res.status(400).json({
+        message: "Cannot decrease quantity below 1. Use the remove button instead.",
+      });
+      return;
+    }
+
+    // Update the cart item quantity
     cart.items[itemIndex].quantity = quantity;
 
-    // Recalculate total amount
+    // Recalculate total amount (assuming `price` is stored in cart.items)
     cart.totalAmount = cart.items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-    await cart.save();
+
+    // Update the cart in the database
+    await Cart.updateOne({ userId }, cart);
+
     res.status(200).json(cart);
   } catch (error) {
-    const err = error as Error;
+    console.error(`Error updating cart: ${error}`);
     res.status(500).json({ message: "Error updating cart" });
-    console.error(`Error: ${err.name} - ${err.message}`);
   }
 };
+
+
+
+
+
 
 // Function to delete a product from the cart
 const deleteProduct = async (req: Request, res: Response): Promise<void> => {
@@ -256,4 +300,4 @@ export const syncCart = async (req: Request, res: Response) => {
   }
 };
 
-export { getProducts, addProduct, updateProduct, deleteProduct };
+export { getProducts, addProduct, updateProductQuantity, deleteProduct };
