@@ -46,7 +46,7 @@ const getProducts = expressAsyncHandler(
 );
 
 
-// Function to add a product to the cart
+
 const addProduct = async (req: Request, res: Response): Promise<void> => {
   if (!req.user || !req.user.id) {
     res.status(HttpStatus.Unauthorized).json({
@@ -120,14 +120,14 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
 
 const updateProductQuantity = async (req: Request, res: Response): Promise<void> => {
   if (!req.user || !req.user.id) {
-    res.status(401).json({
+    res.status(HttpStatus.Unauthorized).json({
       status: "failed",
       message: "Unauthorized access. No valid user found",
     });
     return;
   }
   if (!req.body || typeof req.body !== 'object') {
-     res.status(400).json({
+     res.status(HttpStatus.BadRequest).json({
       message: 'Invalid request body. A valid JSON object is required.',
     });
     return
@@ -136,13 +136,13 @@ const updateProductQuantity = async (req: Request, res: Response): Promise<void>
   const userId = req.user.id;
   const { productId, quantity } = req.body;
   if (!quantity || !productId) {
-  res.status(400).json({
+  res.status(HttpStatus.BadRequest).json({
       message: 'Both "quantity" and "productId" are required and cannot be empty.',
     });
     return 
   }
   try {
-    // Fetch the cart
+
     const cart = await Cart.findOne({ userId });
     if (!cart) {
       res.status(404).json({ message: "Cart not found" });
@@ -151,7 +151,6 @@ const updateProductQuantity = async (req: Request, res: Response): Promise<void>
 
 
     const productIds = cart.items.map((item) => item.productId);
-
     const products = await Product.find({ _id: { $in: productIds } })
       .select("_id unit") 
       .lean();
@@ -165,16 +164,15 @@ const updateProductQuantity = async (req: Request, res: Response): Promise<void>
     const itemIndex = cart.items.findIndex(
       (item) => item.productId.toString() === productId
     );
-
     if (itemIndex === -1) {
-      res.status(404).json({ message: "Product not found in the cart" });
+      res.status(HttpStatus.NotFound).json({ message: "Product not found in the cart" });
       return;
     }
 
     // Get the unit of the product
     const productUnit = productMap[productId];
     if (!productUnit) {
-      res.status(404).json({ message: "Product not found in the database" });
+      res.status(HttpStatus.NotFound).json({ message: "Product not found in the database" });
       return;
     }
 
@@ -207,15 +205,12 @@ if (quantity < 0 && currentQuantity + quantity < 1) {
     return
   } catch (error) {
     console.error(`Error updating cart: ${error}`);
-    res.status(500).json({ message: "Error updating cart" });
+    res.status(HttpStatus.ServerError).json({ message: "Error updating cart" });
   }
 };
 
 
 
-
-
-// Function to delete a product from the cart
 const deleteProduct = async (req: Request, res: Response): Promise<void> => {
   if (!req.user || !req.user.id) {
     res.status(HttpStatus.Unauthorized).json({
@@ -245,26 +240,19 @@ const deleteProduct = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Find the product in the cart to delete
     const itemIndex = cart.items.findIndex(item => item.productId.equals(productId));
-
     if (itemIndex === -1) {
       res.status(HttpStatus.NotFound).json({ message: "Product not found in the cart" });
       return;
     }
 
-    // Remove the product from the cart
     cart.items.splice(itemIndex, 1);
-
-    // Recalculate total amount
     cart.totalAmount = cart.items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
 
-    // Save the updated caret to the database
     await cart.save();
-
     res.status(HttpStatus.Success).json(cart);
   } catch (error) {
     const err = error as Error;
