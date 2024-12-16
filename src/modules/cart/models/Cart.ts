@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import Joi from "joi";
+import { ICart } from "../interfaces/cart";
 
 const cartSchema = new mongoose.Schema({
   userId: {
@@ -33,11 +35,28 @@ const cartSchema = new mongoose.Schema({
     },
   ],
   totalAmount: {
-    type: Number,
+    type: Number || String,
     required: true,
   },
 });
 
-const Cart = mongoose.model("Cart", cartSchema);
+
+
+// Joi validation schema for a cart
+const cartValidateShema = Joi.object({
+
+        productId: Joi.string().required(), // Mongoose ObjectId as a string
+        quantity: Joi.number().min(1).required(),
+        size: Joi.string()
+          .valid("xs", "sm", "md", "lg", "xl", "xxl")
+          .required(),
+        price: Joi.number().positive().required(),
+        image: Joi.string().uri().required(),
+});
+
+const Cart = mongoose.model<ICart>("Cart", cartSchema);
+export const validateCart = (data: Record<string, any>) => {
+  return cartValidateShema.validate(data);
+};
 
 export default Cart;

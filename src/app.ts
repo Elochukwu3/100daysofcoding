@@ -16,7 +16,7 @@ import googleAuth from "./modules/auth/routes/google.routes";
 import cookieParser from "cookie-parser";
 import googleAuthSessionConfig from "./modules/common/config/googleSessionConfig";
 import otpSessionConfig from "./modules/common/config/otpSessionConfig";
-import cartRoute from "./modules/products/routes/cart.route";
+import cartRoute from "./modules/cart/routes/cart.route";
 import deliveryRoute from "./modules/delivery-add/deliveryAdd.route"
 
 import morgan from "morgan";
@@ -95,5 +95,5 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 app.listen(PORT, () => {
-  console.log(`Server is running on port.. ${PORT}`);
+  console.log(`Server is running on port....... ${PORT}`);
 });

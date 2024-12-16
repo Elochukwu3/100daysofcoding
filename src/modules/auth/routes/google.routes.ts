@@ -36,7 +36,7 @@ router.get(
   }),
   (req: Request, res: Response) => {
     if (req.isAuthenticated()) {
-      res.redirect(`https://exclusive-ecommerce-site-2kp1.vercel.app/dashboard`);
+      res.redirect(`https://exclusive-ecommerce-site-2kp1.vercel.app/profile`);
     } else {
       res.redirect("/auth/v1/google/failure");
     }

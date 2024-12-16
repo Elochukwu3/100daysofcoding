@@ -49,16 +49,39 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         statusCode: HttpStatus.NotFound,
       });
     }
+    const allowedFields = ["firstname", "lastname", "phoneNumber", "email", "address", "gender"];
+const invalidFields = Object.keys(req.body).filter((key) => !allowedFields.includes(key));
 
-    if (firstname) user.firstname = firstname;
-    if (lastname) user.lastname = lastname;
-    if (phoneNumber) user.phoneNumber = phoneNumber;
-    if (email) user.email = email;
-    if (address) user.address = address;
-    if (gender) user.gender = gender.toLowerCase();
+if (invalidFields.length > 0) {
+  return res.status(HttpStatus.BadRequest).json({
+    status: "failed",
+    message: `Invalid fields: ${invalidFields.join(", ")}`,
+    statusCode: HttpStatus.BadRequest,
+  });
+}
 
-    await user.save();
-    // const { __v, _id, password, ...remData } = user.toObject();
+
+    const updates: Record<string, any> = {};
+allowedFields.forEach((field) => {
+  if (req.body[field]) updates[field] = req.body[field];
+});
+
+if (updates.gender) {
+  const gender = updates.gender.toLowerCase();
+  if (gender !== "male" && gender !== "female") {
+      return res.status(HttpStatus.BadRequest).json({
+          status: "Validation failed",
+          message: {
+              field: "gender",
+              details: `${updates.gender} is not a valid option. Please enter either 'male' or 'female' as the gender`,
+          },
+      });
+  }
+  updates.gender = gender;
+}
+
+Object.assign(user, updates);
+await user.save();
 
     return res.status(HttpStatus.Success).json({
       status: "success",
