@@ -318,3 +318,58 @@ export const syncCart = async (req: Request, res: Response) => {
 };
 
 export { getProducts, addProduct, updateProductQuantity, deleteProduct };
+// cartUtils.js
+// export const saveCartToLocalStorage = (cart) => {
+//   localStorage.setItem('cart', JSON.stringify(cart));
+// };
+
+// export const getCartFromLocalStorage = () => {
+//   const cart = localStorage.getItem('cart');
+//   return cart ? JSON.parse(cart) : [];
+// };
+
+
+// import axios from 'axios';
+// import { saveCartToLocalStorage, getCartFromLocalStorage } from './cartUtils';
+
+// // Function to sync cart with the backend
+// export const syncCartWithBackend = async (userId) => {
+//   const localCart = getCartFromLocalStorage();
+
+//   try {
+//     const response = await axios.post('/api/cart/sync', { userId, cart: localCart });
+//     const syncedCart = response.data;
+
+//     // Update local storage with the synced cart
+//     saveCartToLocalStorage(syncedCart.items);
+
+//     console.log('Cart synced successfully:', syncedCart);
+//     return syncedCart;
+//   } catch (error) {
+//     console.error('Error syncing cart:', error);
+//     throw error;
+//   }
+// };
+
+// import { saveCartToLocalStorage, getCartFromLocalStorage } from './cartUtils';
+
+// export const addItemToCart = (item) => {
+//   const cart = getCartFromLocalStorage();
+
+//   // Check if the item already exists (match by productId and size)
+//   const existingItemIndex = cart.findIndex(
+//     (cartItem) => cartItem.productId === item.productId && cartItem.size === item.size
+//   );
+
+//   if (existingItemIndex !== -1) {
+//     // Update quantity if the item exists
+//     cart[existingItemIndex].quantity += item.quantity;
+//   } else {
+//     // Add new item to the cart
+//     cart.push(item);
+//   }
+
+//   // Save the updated cart
+//   saveCartToLocalStorage(cart);
+//   console.log('Item added to cart:', cart);
+// };
