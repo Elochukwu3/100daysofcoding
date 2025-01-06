@@ -61,7 +61,7 @@ const verifyUserAcces = (requiredRoles = ["User", "Admin"]) => {
     req.user = { id: userId, roles };
 
     if (!res.headersSent) {
-      return next(); // Proceed to next middleware
+      return next(); 
     }
   };
 };
