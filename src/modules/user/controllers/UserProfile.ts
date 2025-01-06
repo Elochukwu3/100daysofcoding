@@ -28,7 +28,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
         const userObject = userProfile.toObject();
 
         const { __v, _id,refreshToken, provider, roles, password: pwd, ...remDetails } = userObject;
-        res.status(HttpStatus.Success).json(
+       return res.status(HttpStatus.Success).json(
             {
                 status: "success",
                 data: remDetails,
