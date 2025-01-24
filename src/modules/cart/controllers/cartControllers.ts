@@ -1,4 +1,5 @@
 import mongoose from "mongoose"; 
+import Product from "../../product/models/Product";
 import { ICart, LocalCartItem } from './../interfaces/cart';
 import { ICartItem } from './../interfaces/CartItem';
 import { Request, Response } from "express";
@@ -9,7 +10,6 @@ import {
   Cart as CartType,
 } from "../../interfaces/Cart";
 import expressAsyncHandler from "express-async-handler";
-import Product  from "modules/product/models/Product";
 
 // Function to get products in a user's cart
 const getProducts = expressAsyncHandler(
