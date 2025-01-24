@@ -51,15 +51,15 @@ const registerUser = asyncHandler(
         expiresAt: otpExpiry,
       })
     );
-
-    const result = await sendOTPEmail(
-      email as string,
-      OTP,
-      "Your one-time Email verification code is:"
-    );
+//uncomment later to avoid usuage
+    // const result = await sendOTPEmail(
+    //   email as string,
+    //   OTP,
+    //   "Your one-time Email verification code is:"
+    // );
     res.status(HttpStatus.Created).json({
       status: "success",
-      message: result,
+      message: "email sent",
       otp: OTP,
       email
     });
