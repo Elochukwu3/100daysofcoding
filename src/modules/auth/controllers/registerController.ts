@@ -5,7 +5,7 @@ import { validateRegisterInput } from "../models/User";
 import { hashPassword } from "../../common/utils/hashPassword";
 import { HttpStatus } from "../../common/enums/StatusCodes";
 import { generateOtp } from "../utils/generateOtp";
-import sendOTPEmail from "../../common/utils/sendEmail";
+// import sendOTPEmail from "../../common/utils/sendEmail";
 import "../../interfaces/session";
 import { OTP_STATIC_VALUE } from "../../auth/static/otp.static";
 import redisClient from "../../common/config/redisClient";
