@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 import { HttpStatus } from "../../common/enums/StatusCodes";
-import redisClient from "../../common/config/redisClient"; 
+// import redisClient from "../../common/config/redisClient";
 import { validateOtpInput } from "../models/User";
+import NodeCache from "node-cache";
 
-const verifyResetOtp = async (req: Request, res: Response): Promise<Response> => {
+const cache = new NodeCache({ stdTTL: 0 });
+
+const verifyResetOtp = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { otp, email } = req.body;
   const { error } = validateOtpInput({ otp, email });
   if (error) {
@@ -14,28 +20,28 @@ const verifyResetOtp = async (req: Request, res: Response): Promise<Response> =>
     });
   }
 
-  const userOtpData = await redisClient.get(email);
+  // const userOtpData = await redisClient.get(email);
+  const userOtpData = cache.get<string>(email);
 
   if (!userOtpData) {
     return res.status(HttpStatus.BadRequest).json({
       status: "Bad Request",
-      message: "OTP has not been generated or has expired. Please request a new OTP.",
+      message:
+        "OTP has not been generated or has expired. Please request a new OTP.",
     });
   }
 
   const { otp: storedOtp, expiresAt, isVerified } = JSON.parse(userOtpData);
   const currentTime = Date.now();
 
-
   if (currentTime > expiresAt) {
-    await redisClient.del(email);
+    cache.del(email);
     return res.status(HttpStatus.BadRequest).json({
       status: "Bad Request",
       message: "OTP has expired. Please request a new one.",
     });
   }
 
-  
   if (storedOtp !== otp) {
     return res.status(HttpStatus.BadRequest).json({
       status: "Bad Request",
@@ -43,14 +49,13 @@ const verifyResetOtp = async (req: Request, res: Response): Promise<Response> =>
     });
   }
 
-  
   const updatedOtpData = {
     otp: storedOtp,
     expiresAt,
-    isVerified: true, 
+    isVerified: true,
   };
 
-  await redisClient.set(email, JSON.stringify(updatedOtpData));
+  cache.set(email, JSON.stringify(updatedOtpData));
 
   return res.status(HttpStatus.Success).json({
     status: "Success",

@@ -17,7 +17,7 @@ import cookieParser from "cookie-parser";
 import googleAuthSessionConfig from "./modules/common/config/googleSessionConfig";
 import otpSessionConfig from "./modules/common/config/otpSessionConfig";
 import cartRoute from "./modules/cart/routes/cart.route";
-import deliveryRoute from "./modules/delivery-add/deliveryAdd.route"
+import deliveryRoute from "./modules/delivery-add/deliveryAdd.route";
 
 import morgan from "morgan";
 import helmet from "helmet";
@@ -80,8 +80,8 @@ app.use("/api/v1", stateRoute);
 app.use("/user/v1", userRoute);
 app.use("/cart/v1", cartRoute);
 app.use("/v1/products", productRoute);
-app.use("/v1/delivery", deliveryRoute)
-app.use('/api/v1/orders', orderRoute);
+app.use("/v1/delivery", deliveryRoute);
+app.use("/api/v1/orders", orderRoute);
 app.all("*", (req, res) => {
   res.status(404);
   if (req.accepts("html")) {

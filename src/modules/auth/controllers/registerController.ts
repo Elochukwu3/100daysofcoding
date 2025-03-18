@@ -8,7 +8,10 @@ import { generateOtp } from "../utils/generateOtp";
 // import sendOTPEmail from "../../common/utils/sendEmail";
 import "../../interfaces/session";
 import { OTP_STATIC_VALUE } from "../../auth/static/otp.static";
-import redisClient from "../../common/config/redisClient";
+// import redisClient from "../../common/config/redisClient";
+import NodeCache from "node-cache";
+
+const cache = new NodeCache({ stdTTL: 300 });
 
 const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -38,10 +41,23 @@ const registerUser = asyncHandler(
     const OTP = await generateOtp();
     const hashedPassword = await hashPassword(password);
 
-    await redisClient.setEx(
+    // await redisClient.setEx(
+    //   email,
+    //   OTP_EXPIRY_TIME,
+    //   JSON.stringify({
+    //     firstname,
+    //     lastname,
+    //     state,
+    //     email,
+    //     password: hashedPassword,
+    //     otp: OTP,
+    //     expiresAt: otpExpiry,
+    //   })
+    // );
+
+    cache.set(
       email,
-      OTP_EXPIRY_TIME,
-      JSON.stringify({
+      {
         firstname,
         lastname,
         state,
@@ -49,9 +65,10 @@ const registerUser = asyncHandler(
         password: hashedPassword,
         otp: OTP,
         expiresAt: otpExpiry,
-      })
+      },
+      OTP_EXPIRY_TIME / 1000
     );
-//uncomment later to avoid usuage
+    //uncomment later to avoid usuage
     // const result = await sendOTPEmail(
     //   email as string,
     //   OTP,
@@ -61,7 +78,7 @@ const registerUser = asyncHandler(
       status: "success",
       message: "email sent",
       otp: OTP,
-      email
+      email,
     });
   }
 );

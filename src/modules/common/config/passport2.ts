@@ -24,7 +24,6 @@ passport.use(
       if (!email) return done(new Error("Email is required for Google signup"));
 
       try {
-       
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {

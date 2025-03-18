@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import { User, validatePasswordInput } from "../models/User";
 import { hashPassword } from "../../common/utils/hashPassword";
 import { HttpStatus } from "../../common/enums/StatusCodes";
-import redisClient from "../../common/config/redisClient"; // Importing the Redis client
+// import redisClient from "../../common/config/redisClient"; // Importing the Redis client
+
+import NodeCache from "node-cache";
+
+const cache = new NodeCache({ stdTTL: 0 });
 
 const resetPassword = async (
   req: Request,
@@ -17,7 +21,7 @@ const resetPassword = async (
     });
   }
 
-  const userOtpData = await redisClient.get(email);
+  const userOtpData = cache.get(email);
 
   if (!userOtpData) {
     return res.status(HttpStatus.Unauthorized).json({
@@ -26,7 +30,8 @@ const resetPassword = async (
     });
   }
 
-  const { isVerified } = JSON.parse(userOtpData);
+  // const { isVerified } = JSON.parse(userOtpData);
+  const { isVerified } = userOtpData as { isVerified: boolean };
 
   if (!isVerified) {
     return res.status(HttpStatus.Unauthorized).json({
@@ -54,7 +59,7 @@ const resetPassword = async (
   user.password = await hashPassword(newPassword);
   await user.save();
 
-  await redisClient.del(email);
+  cache.del(email);
 
   return res.status(HttpStatus.Success).json({
     status: "Success",
