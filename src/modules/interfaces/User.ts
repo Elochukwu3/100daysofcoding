@@ -4,7 +4,7 @@ import { Document } from "mongoose";
 export interface IUser extends Document {
   _id: string;
   firstname: string;
-  gender?:string;
+  gender?: string;
   lastname: string;
   state?: string;
   email: string;
@@ -22,6 +22,8 @@ export interface IUser extends Document {
     Admin?: number;
   };
   refreshToken: String;
+  otp?: string | null;
+  expiresAt?: number | undefined;
 }
 
 declare module "express-serve-static-core" {
